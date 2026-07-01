@@ -30,7 +30,8 @@
 
 
 ## 🔊 Étape 5 : Peaufinage & Immersion
-- [/] Intégrer la synthèse vocale (Text-to-Speech) dans Angular pour faire parler APEX en temps réel *(En cours)*
-- [/] Ajouter des effets sonores futuristes discrets lors des changements d'état *(En cours)*
+- [x] Intégrer la synthèse vocale (Text-to-Speech) dans Angular pour faire parler APEX en temps réel
+- [x] Ajouter des effets sonores futuristes discrets lors des changements d'état
+
 
 - [ ] *Optionnel :* Configurer Electron pour encapsuler l'application Angular dans une fenêtre de bureau transparente
