@@ -1,0 +1,49 @@
+name: CI Pipeline & Release
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  build-test-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+          cache-dependency-path: apex-workspace/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: apex-workspace
+
+      - name: Run Tests
+        run: npx nx run-many -t test
+        working-directory: apex-workspace
+
+      - name: Build Applications
+        run: npx nx run-many -t build
+        working-directory: apex-workspace
+
+      - name: Run Semantic Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: npx semantic-release
+        working-directory: apex-workspace
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
