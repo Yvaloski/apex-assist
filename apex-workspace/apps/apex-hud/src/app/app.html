@@ -1,2 +1,269 @@
-<app-nx-welcome></app-nx-welcome>
-<router-outlet></router-outlet>
+<header class="hud-header">
+  <div class="header-left">
+    <div class="logo-box">
+      <span class="logo-symbol">▲</span>
+      <h1 class="hud-main-title">Welcome apex-hud</h1>
+    </div>
+    <div class="network-badge">
+      <span class="pulse-dot"></span>
+      <span class="badge-text">CORE_WS: ESTABLISHED</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="sys-time">
+      <span class="label">SYS_STATUS:</span>
+      <span class="value">{{ stateLabel() }}</span>
+    </div>
+    <div class="state-status-badge" [ngClass]="stateClass()">
+      <span class="state-label">{{ state() }}</span>
+    </div>
+  </div>
+</header>
+
+<main class="hud-main-grid">
+  <!-- LEFT: System Telemetry Panel -->
+  <section class="widget-panel system-metrics-panel">
+    <div class="widget-header">
+      <span class="widget-title">TELEMETRY_MONITOR</span>
+      <span class="widget-subtitle">REAL-TIME HARDWARE SENSORS</span>
+    </div>
+    
+    <div class="widget-body metrics-body">
+      <!-- Radial Gauges Row -->
+      <div class="radial-gauges-row">
+        <!-- CPU Gauge -->
+        <div class="radial-gauge-container">
+          <svg viewBox="0 0 100 100" class="radial-gauge">
+            <defs>
+              <linearGradient id="cpuGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00f3ff" />
+                <stop offset="100%" stop-color="#0066ff" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="40" class="radial-gauge-bg" />
+            <circle cx="50" cy="50" r="40" class="radial-gauge-fill cpu-radial" 
+                    [style.strokeDashoffset]="251.2 - (251.2 * systemMetrics().cpu / 100)" />
+            <text x="50" y="55" class="radial-gauge-text">{{ systemMetrics().cpu | number:'1.0-0' }}%</text>
+          </svg>
+          <span class="gauge-label">CPU CORE</span>
+        </div>
+
+        <!-- RAM Gauge -->
+        <div class="radial-gauge-container">
+          <svg viewBox="0 0 100 100" class="radial-gauge">
+            <defs>
+              <linearGradient id="ramGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00f3ff" />
+                <stop offset="100%" stop-color="#0066ff" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="40" class="radial-gauge-bg" />
+            <circle cx="50" cy="50" r="40" class="radial-gauge-fill ram-radial" 
+                    [style.strokeDashoffset]="251.2 - (251.2 * systemMetrics().ram / 100)" />
+            <text x="50" y="55" class="radial-gauge-text">{{ systemMetrics().ram | number:'1.0-0' }}%</text>
+          </svg>
+          <span class="gauge-label">RAM CORE</span>
+        </div>
+      </div>
+
+      <!-- Linear Bars -->
+      <div class="linear-metrics">
+        <!-- CPU Bar -->
+        <div class="metric-container">
+          <div class="metric-info">
+            <span class="metric-label">CPU LOAD</span>
+            <span class="metric-value">{{ systemMetrics().cpu | number:'1.1-1' }}%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill cpu-fill" [style.width.%]="systemMetrics().cpu"></div>
+          </div>
+          <div class="metric-subgrid">
+            <div class="metric-sub-item">
+              <span class="sub-label">FREQ</span>
+              <span class="sub-value">4.21 GHz</span>
+            </div>
+            <div class="metric-sub-item">
+              <span class="sub-label">TEMP</span>
+              <span class="sub-value">54.0°C</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RAM Bar -->
+        <div class="metric-container">
+          <div class="metric-info">
+            <span class="metric-label">RAM USAGE</span>
+            <span class="metric-value">{{ systemMetrics().ram | number:'1.1-1' }}%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill ram-fill" [style.width.%]="systemMetrics().ram"></div>
+          </div>
+          <div class="metric-subgrid">
+            <div class="metric-sub-item">
+              <span class="sub-label">USED</span>
+              <span class="sub-value">{{ (16 * systemMetrics().ram / 100) | number:'1.1-1' }} GB</span>
+            </div>
+            <div class="metric-sub-item">
+              <span class="sub-label">MAX</span>
+              <span class="sub-value">16.0 GB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CENTER: SVG Core + Controls -->
+  <section class="center-stage">
+    <div class="core-orb-container" [ngClass]="stateClass()">
+      <div class="glow-backdrop"></div>
+      
+      <!-- SVG Animated Orb -->
+      <svg viewBox="0 0 200 200" class="core-svg">
+        <defs>
+          <radialGradient id="idleGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(0, 210, 196, 0.4)" />
+            <stop offset="60%" stop-color="rgba(0, 210, 196, 0.1)" />
+            <stop offset="100%" stop-color="rgba(0, 210, 196, 0)" />
+          </radialGradient>
+          <radialGradient id="thinkingGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(255, 170, 0, 0.5)" />
+            <stop offset="60%" stop-color="rgba(255, 170, 0, 0.15)" />
+            <stop offset="100%" stop-color="rgba(255, 170, 0, 0)" />
+          </radialGradient>
+          <radialGradient id="listeningGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(255, 0, 234, 0.5)" />
+            <stop offset="60%" stop-color="rgba(255, 0, 234, 0.15)" />
+            <stop offset="100%" stop-color="rgba(255, 0, 234, 0)" />
+          </radialGradient>
+        </defs>
+
+        <!-- Ambient Backdrop glows based on state -->
+        <circle cx="100" cy="100" r="80" class="ambient-glow" />
+
+        <!-- Rotating Outer Ring 1 (Slow Clockwise) -->
+        <circle cx="100" cy="100" r="85" class="ring ring-outer-1" />
+
+        <!-- Rotating Outer Ring 2 (Fast Counter-Clockwise dashed) -->
+        <circle cx="100" cy="100" r="75" class="ring ring-outer-2" stroke-dasharray="10 15 30 15" />
+
+        <!-- Static Tech Grid Circles -->
+        <circle cx="100" cy="100" r="65" class="ring ring-outer-3" stroke-dasharray="2 6" />
+
+        <!-- Wave patterns that contract/expand (LISTENING state) -->
+        <circle cx="100" cy="100" r="55" class="ring ring-wave-1" />
+        <circle cx="100" cy="100" r="55" class="ring ring-wave-2" />
+
+        <!-- Main central breathing sphere -->
+        <circle cx="100" cy="100" r="38" class="core-sphere" />
+
+        <!-- Tech/geometric overlays -->
+        <polygon points="100,72 124,114 76,114" class="core-geom geom-triangle" />
+        <circle cx="100" cy="100" r="12" class="core-inner" />
+        <line x1="100" y1="25" x2="100" y2="40" class="axis-line" />
+        <line x1="100" y1="160" x2="100" y2="175" class="axis-line" />
+        <line x1="25" y1="100" x2="40" y2="100" class="axis-line" />
+        <line x1="160" y1="100" x2="175" y2="100" class="axis-line" />
+      </svg>
+      
+      <!-- Central Core Readout Overlay -->
+      <div class="core-readout">
+        <div class="digital-label">COGNITIVE_CORE</div>
+        <div class="digital-state">{{ state() }}</div>
+      </div>
+    </div>
+
+    <!-- Inputs & Control Area -->
+    <div class="control-panel glass-panel">
+      <div class="input-container">
+        <div class="input-border-decoration"></div>
+        <textarea 
+          [(ngModel)]="promptText" 
+          (keydown.enter)="$event.preventDefault(); sendPrompt()"
+          placeholder="ENTER COGNITIVE DIRECTIVE (PRESS ENTER TO TRANSMIT)..." 
+          class="hud-textarea">
+        </textarea>
+        
+        <div class="button-group">
+          <button 
+            *ngIf="isSpeechSupported"
+            (click)="toggleSpeech()" 
+            [class.active]="state() === 'LISTENING'"
+            class="hud-button speech-button"
+            type="button"
+            title="Voice Recognition">
+            <svg viewBox="0 0 24 24" class="btn-icon">
+              <path fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/>
+            </svg>
+            <span>{{ state() === 'LISTENING' ? 'VOX_ON (STOP)' : 'ACTIVATE VOX' }}</span>
+          </button>
+          
+          <button 
+            (click)="sendPrompt()" 
+            [disabled]="!promptText.trim()"
+            class="hud-button submit-button"
+            type="button">
+            <svg viewBox="0 0 24 24" class="btn-icon">
+              <path fill="currentColor" d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
+            </svg>
+            <span>TRANSMIT DIRECTIVE</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: AI Streaming Response Console -->
+  <section class="widget-panel streaming-text-panel">
+    <div class="widget-header">
+      <span class="widget-title">COGNITIVE_LOGSTREAM</span>
+      <span class="widget-subtitle">LIVE AI COGNITION STREAM</span>
+    </div>
+    
+    <div class="widget-body console-body" #responseContainer>
+      <div class="console-overlay"></div>
+      <div class="console-border-decorations">
+        <span class="corner-decor top-left"></span>
+        <span class="corner-decor top-right"></span>
+        <span class="corner-decor bottom-left"></span>
+        <span class="corner-decor bottom-right"></span>
+      </div>
+
+      <div class="console-scroll-wrapper">
+        <div class="console-lines" *ngIf="currentResponse(); else emptyPrompt">
+          <div class="console-metadata">
+            <span class="tag-secure">SECURE_LINK</span>
+            <span class="time-stamp">PACKETS_RECVD: {{ currentResponse().length }} B</span>
+          </div>
+          <p class="console-text">{{ currentResponse() }}<span class="console-cursor" *ngIf="state() === 'THINKING'">█</span></p>
+        </div>
+        
+        <ng-template #emptyPrompt>
+          <div class="console-empty">
+            <div class="glitch-text" data-text="AWAITING DIRECTIVE">AWAITING DIRECTIVE</div>
+            <div class="sub-empty">ESTABLISH INPUT OR ENABLE VOX SYSTEM...</div>
+            <div class="tech-stats">
+              <div>HOST: LOCAL_NODE_01</div>
+              <div>MODEL: OLLAMA_LLM_HOST</div>
+              <div>PROTO: WEBSOCKET_SECURE</div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="hud-footer">
+  <div class="footer-left">
+    <span>SYSTEM: APEX_V1.0.0</span>
+    <span class="divider">|</span>
+    <span>ENCRYPTION: AES_256_GCM</span>
+  </div>
+  <div class="footer-center">
+    <span class="hud-ticker">STATUS_OK // DATA_STREAM_STABLE // READY</span>
+  </div>
+  <div class="footer-right">
+    <span>© 2026 DEEPMIND // APEX_COGNITION</span>
+  </div>
+</footer>

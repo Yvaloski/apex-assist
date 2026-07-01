@@ -1,1 +1,90 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --bg-color: #050811;
+  --bg-grid-color: rgba(0, 243, 255, 0.03);
+  --glass-bg: rgba(10, 18, 36, 0.65);
+  --glass-border: rgba(0, 243, 255, 0.15);
+  --glass-shadow: rgba(0, 0, 0, 0.6);
+  
+  --color-primary: #00f3ff; /* Cyan */
+  --color-primary-rgb: 0, 243, 255;
+  --color-secondary: #0066ff; /* Blue */
+  --color-accent-thinking: #ffaa00; /* Amber/Orange */
+  --color-accent-thinking-rgb: 255, 170, 0;
+  --color-accent-listening: #ff00ea; /* Magenta/Purple */
+  --color-accent-listening-rgb: 255, 0, 234;
+  --color-idle: #00d2c4; /* Teal */
+  --color-idle-rgb: 0, 210, 196;
+  
+  --color-text-main: #e2f1f5;
+  --color-text-muted: #6f809a;
+  
+  --font-hud: 'Orbitron', sans-serif;
+  --font-ui: 'Rajdhani', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--color-text-main);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Futuristic background grid and scanlines */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(var(--bg-grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: -2;
+}
+
+body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+/* Scrollbar styles for glass container */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 243, 255, 0.02);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 243, 255, 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 243, 255, 0.4);
+}

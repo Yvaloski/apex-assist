@@ -21,14 +21,16 @@
 - [x] Implémenter le service de reconnaissance vocale via l'API Web Speech du navigateur
 
 ## 🎨 Étape 4 : L'Interface Graphique (Style HUD / FUI)
-- [/] Créer le layout principal en CSS Grid (Dashboard immersif en mode sombre) *(En cours)*
-- [/] Concevoir le composant "Central Core" (L'orbe réactif) en SVG avec animations CSS *(En cours)*
-- [/] Connecter les animations du Core aux signaux d'état d'APEX (`IDLE`, `THINKING`, `LISTENING`) *(En cours)*
-- [/] Développer le widget de monitoring système (Graphiques / Jauges numériques) *(En cours)*
-- [/] Développer le widget de flux de texte (Effet machine à écrire pour le streaming du LLM) *(En cours)*
+- [x] Créer le layout principal en CSS Grid (Dashboard immersif en mode sombre)
+- [x] Concevoir le composant "Central Core" (L'orbe réactif) en SVG avec animations CSS
+- [x] Connecter les animations du Core aux signaux d'état d'APEX (`IDLE`, `THINKING`, `LISTENING`)
+- [x] Développer le widget de monitoring système (Graphiques / Jauges numériques)
+- [x] Développer le widget de flux de texte (Effet machine à écrire pour le streaming du LLM)
+
 
 
 ## 🔊 Étape 5 : Peaufinage & Immersion
-- [ ] Intégrer la synthèse vocale (Text-to-Speech) dans Angular pour faire parler APEX en temps réel
-- [ ] Ajouter des effets sonores futuristes discrets lors des changements d'état
+- [/] Intégrer la synthèse vocale (Text-to-Speech) dans Angular pour faire parler APEX en temps réel *(En cours)*
+- [/] Ajouter des effets sonores futuristes discrets lors des changements d'état *(En cours)*
+
 - [ ] *Optionnel :* Configurer Electron pour encapsuler l'application Angular dans une fenêtre de bureau transparente
