@@ -1,26 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles for minimalist cyberpunk APEX HUD */
 :root {
-  --bg-color: #050811;
-  --bg-grid-color: rgba(0, 243, 255, 0.03);
-  --glass-bg: rgba(10, 18, 36, 0.65);
-  --glass-border: rgba(0, 243, 255, 0.15);
-  --glass-shadow: rgba(0, 0, 0, 0.6);
+  --bg-color: #030406;
+  --bg-grid-color: rgba(0, 255, 102, 0.02);
+  --glass-bg: #030406;
+  --glass-border: rgba(0, 255, 102, 0.15);
+  --glass-shadow: none;
   
-  --color-primary: #00f3ff; /* Cyan */
-  --color-primary-rgb: 0, 243, 255;
-  --color-secondary: #0066ff; /* Blue */
-  --color-accent-thinking: #ffaa00; /* Amber/Orange */
-  --color-accent-thinking-rgb: 255, 170, 0;
-  --color-accent-listening: #ff00ea; /* Magenta/Purple */
-  --color-accent-listening-rgb: 255, 0, 234;
-  --color-idle: #00d2c4; /* Teal */
-  --color-idle-rgb: 0, 210, 196;
+  --color-primary: #00ff66; /* Neon Green */
+  --color-primary-rgb: 0, 255, 102;
+  --color-secondary: #00cc52; /* Slightly dimmer neon green */
+  --color-accent-thinking: #00ff66;
+  --color-accent-thinking-rgb: 0, 255, 102;
+  --color-accent-listening: #00ff66;
+  --color-accent-listening-rgb: 0, 255, 102;
+  --color-idle: #00ff66;
+  --color-idle-rgb: 0, 255, 102;
   
-  --color-text-main: #e2f1f5;
-  --color-text-muted: #6f809a;
+  --color-text-main: #d0ffd0; /* Bright readable green-white */
+  --color-text-muted: #006622; /* Dimmer green for labels/subtexts */
   
-  --font-hud: 'Orbitron', sans-serif;
-  --font-ui: 'Rajdhani', sans-serif;
+  --font-hud: 'Share Tech Mono', monospace;
+  --font-ui: 'Share Tech Mono', monospace;
   --font-mono: 'Share Tech Mono', monospace;
 }
 
@@ -28,13 +28,14 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: var(--font-mono) !important;
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--color-text-main);
-  font-family: var(--font-ui);
-  font-size: 16px;
+  font-family: var(--font-mono);
+  font-size: 14px;
   overflow: hidden;
   height: 100vh;
   width: 100vw;
@@ -66,25 +67,25 @@ body::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+  background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 255, 102, 0.04) 50%);
   background-size: 100% 4px;
   pointer-events: none;
   z-index: -1;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
-/* Scrollbar styles for glass container */
+/* Scrollbar styles for console/container */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(0, 243, 255, 0.02);
+  background: rgba(0, 255, 102, 0.01);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 243, 255, 0.2);
-  border-radius: 3px;
+  background: rgba(0, 255, 102, 0.15);
+  border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 243, 255, 0.4);
+  background: rgba(0, 255, 102, 0.35);
 }

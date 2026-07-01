@@ -29,85 +29,84 @@
     </div>
     
     <div class="widget-body metrics-body">
-      <!-- Radial Gauges Row -->
-      <div class="radial-gauges-row">
-        <!-- CPU Gauge -->
-        <div class="radial-gauge-container">
-          <svg viewBox="0 0 100 100" class="radial-gauge">
-            <defs>
-              <linearGradient id="cpuGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#00f3ff" />
-                <stop offset="100%" stop-color="#0066ff" />
-              </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="40" class="radial-gauge-bg" />
-            <circle cx="50" cy="50" r="40" class="radial-gauge-fill cpu-radial" 
-                    [style.strokeDashoffset]="251.2 - (251.2 * systemMetrics().cpu / 100)" />
-            <text x="50" y="55" class="radial-gauge-text">{{ systemMetrics().cpu | number:'1.0-0' }}%</text>
-          </svg>
-          <span class="gauge-label">CPU CORE</span>
+      <!-- CPU Monitor -->
+      <div class="cli-monitor-section">
+        <div class="cli-header-row">
+          <span class="cli-title">CPU_LOAD_SENSORS</span>
+          <span class="cli-status-text">ONLINE</span>
         </div>
-
-        <!-- RAM Gauge -->
-        <div class="radial-gauge-container">
-          <svg viewBox="0 0 100 100" class="radial-gauge">
-            <defs>
-              <linearGradient id="ramGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#00f3ff" />
-                <stop offset="100%" stop-color="#0066ff" />
-              </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="40" class="radial-gauge-bg" />
-            <circle cx="50" cy="50" r="40" class="radial-gauge-fill ram-radial" 
-                    [style.strokeDashoffset]="251.2 - (251.2 * systemMetrics().ram / 100)" />
-            <text x="50" y="55" class="radial-gauge-text">{{ systemMetrics().ram | number:'1.0-0' }}%</text>
-          </svg>
-          <span class="gauge-label">RAM CORE</span>
+        <div class="cli-bar-row">
+          <span class="cli-bar-label">CPU [</span>
+          <div class="cli-bar-outer">
+            <div class="cli-bar-inner" [style.width.%]="systemMetrics().cpu"></div>
+          </div>
+          <span class="cli-bar-label">]</span>
+          <span class="cli-value-text">{{ systemMetrics().cpu | number:'1.1-1' }}%</span>
+        </div>
+        <div class="cli-details-grid">
+          <div class="cli-detail-item">
+            <span class="lbl">CLOCK_SPEED:</span>
+            <span class="val">4.21 GHz</span>
+          </div>
+          <div class="cli-detail-item">
+            <span class="lbl">CORE_TEMP:</span>
+            <span class="val">54.0°C</span>
+          </div>
+          <div class="cli-detail-item">
+            <span class="lbl">THREAD_POOL:</span>
+            <span class="val">ACTIVE</span>
+          </div>
+          <div class="cli-detail-item">
+            <span class="lbl">LOAD_AVG:</span>
+            <span class="val">1.45</span>
+          </div>
         </div>
       </div>
 
-      <!-- Linear Bars -->
-      <div class="linear-metrics">
-        <!-- CPU Bar -->
-        <div class="metric-container">
-          <div class="metric-info">
-            <span class="metric-label">CPU LOAD</span>
-            <span class="metric-value">{{ systemMetrics().cpu | number:'1.1-1' }}%</span>
+      <!-- RAM Monitor -->
+      <div class="cli-monitor-section">
+        <div class="cli-header-row">
+          <span class="cli-title">MEM_ALLOCATION</span>
+          <span class="cli-status-text">OPTIMIZED</span>
+        </div>
+        <div class="cli-bar-row">
+          <span class="cli-bar-label">RAM [</span>
+          <div class="cli-bar-outer">
+            <div class="cli-bar-inner" [style.width.%]="systemMetrics().ram"></div>
           </div>
-          <div class="progress-bar-bg">
-            <div class="progress-bar-fill cpu-fill" [style.width.%]="systemMetrics().cpu"></div>
+          <span class="cli-bar-label">]</span>
+          <span class="cli-value-text">{{ systemMetrics().ram | number:'1.1-1' }}%</span>
+        </div>
+        <div class="cli-details-grid">
+          <div class="cli-detail-item">
+            <span class="lbl">USED_CAP:</span>
+            <span class="val">{{ (16 * systemMetrics().ram / 100) | number:'1.1-1' }} GB</span>
           </div>
-          <div class="metric-subgrid">
-            <div class="metric-sub-item">
-              <span class="sub-label">FREQ</span>
-              <span class="sub-value">4.21 GHz</span>
-            </div>
-            <div class="metric-sub-item">
-              <span class="sub-label">TEMP</span>
-              <span class="sub-value">54.0°C</span>
-            </div>
+          <div class="cli-detail-item">
+            <span class="lbl">MAX_CAP:</span>
+            <span class="val">16.0 GB</span>
+          </div>
+          <div class="cli-detail-item">
+            <span class="lbl">SWAP_FILE:</span>
+            <span class="val">0.0 GB</span>
+          </div>
+          <div class="cli-detail-item">
+            <span class="lbl">CACHE_BUF:</span>
+            <span class="val">4.1 GB</span>
           </div>
         </div>
+      </div>
 
-        <!-- RAM Bar -->
-        <div class="metric-container">
-          <div class="metric-info">
-            <span class="metric-label">RAM USAGE</span>
-            <span class="metric-value">{{ systemMetrics().ram | number:'1.1-1' }}%</span>
-          </div>
-          <div class="progress-bar-bg">
-            <div class="progress-bar-fill ram-fill" [style.width.%]="systemMetrics().ram"></div>
-          </div>
-          <div class="metric-subgrid">
-            <div class="metric-sub-item">
-              <span class="sub-label">USED</span>
-              <span class="sub-value">{{ (16 * systemMetrics().ram / 100) | number:'1.1-1' }} GB</span>
-            </div>
-            <div class="metric-sub-item">
-              <span class="sub-label">MAX</span>
-              <span class="sub-value">16.0 GB</span>
-            </div>
-          </div>
+      <!-- Additional Diagnostics -->
+      <div class="cli-monitor-section diagnostic-section">
+        <div class="cli-header-row">
+          <span class="cli-title">NETWORK_DIAGNOSTICS</span>
+        </div>
+        <div class="diagnostic-lines">
+          <div>NODE_ADDR: 127.0.0.1:4200</div>
+          <div>WS_LATENCY: 4ms</div>
+          <div>BUFFER_STATUS: NOMINAL</div>
+          <div>PACKET_LOSS: 0.00%</div>
         </div>
       </div>
     </div>
@@ -118,59 +117,75 @@
     <div class="core-orb-container" [ngClass]="stateClass()">
       <div class="glow-backdrop"></div>
       
-      <!-- SVG Animated Orb -->
+      <!-- SVG Animated Particle Core -->
       <svg viewBox="0 0 200 200" class="core-svg">
-        <defs>
-          <radialGradient id="idleGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="rgba(0, 210, 196, 0.4)" />
-            <stop offset="60%" stop-color="rgba(0, 210, 196, 0.1)" />
-            <stop offset="100%" stop-color="rgba(0, 210, 196, 0)" />
-          </radialGradient>
-          <radialGradient id="thinkingGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="rgba(255, 170, 0, 0.5)" />
-            <stop offset="60%" stop-color="rgba(255, 170, 0, 0.15)" />
-            <stop offset="100%" stop-color="rgba(255, 170, 0, 0)" />
-          </radialGradient>
-          <radialGradient id="listeningGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="rgba(255, 0, 234, 0.5)" />
-            <stop offset="60%" stop-color="rgba(255, 0, 234, 0.15)" />
-            <stop offset="100%" stop-color="rgba(255, 0, 234, 0)" />
-          </radialGradient>
-        </defs>
-
-        <!-- Ambient Backdrop glows based on state -->
-        <circle cx="100" cy="100" r="80" class="ambient-glow" />
-
-        <!-- Rotating Outer Ring 1 (Slow Clockwise) -->
-        <circle cx="100" cy="100" r="85" class="ring ring-outer-1" />
-
-        <!-- Rotating Outer Ring 2 (Fast Counter-Clockwise dashed) -->
-        <circle cx="100" cy="100" r="75" class="ring ring-outer-2" stroke-dasharray="10 15 30 15" />
-
-        <!-- Static Tech Grid Circles -->
-        <circle cx="100" cy="100" r="65" class="ring ring-outer-3" stroke-dasharray="2 6" />
-
-        <!-- Wave patterns that contract/expand (LISTENING state) -->
-        <circle cx="100" cy="100" r="55" class="ring ring-wave-1" />
-        <circle cx="100" cy="100" r="55" class="ring ring-wave-2" />
-
-        <!-- Main central breathing sphere -->
-        <circle cx="100" cy="100" r="38" class="core-sphere" />
-
-        <!-- Tech/geometric overlays: Minimalist Cyberpunk Reticle -->
-        <circle cx="100" cy="100" r="18" class="core-geom geom-reticle" stroke-dasharray="3 5" />
-        <circle cx="100" cy="100" r="28" class="core-geom geom-reticle-outer" stroke-dasharray="8 8" />
-        <line x1="100" y1="76" x2="100" y2="82" class="reticle-tick" />
-        <line x1="100" y1="118" x2="100" y2="124" class="reticle-tick" />
-        <line x1="76" y1="100" x2="82" y2="100" class="reticle-tick" />
-        <line x1="118" y1="100" x2="124" y2="100" class="reticle-tick" />
-
-        <circle cx="100" cy="100" r="12" class="core-inner" />
-        <line x1="100" y1="25" x2="100" y2="40" class="axis-line" />
-        <line x1="100" y1="160" x2="100" y2="175" class="axis-line" />
-        <line x1="25" y1="100" x2="40" y2="100" class="axis-line" />
-        <line x1="160" y1="100" x2="175" y2="100" class="axis-line" />
+        <!-- Organic scattered particle swarms -->
+        <g class="particle-group swarm-1">
+          <circle cx="145" cy="80" r="1.2" class="particle" />
+          <circle cx="135" cy="138" r="1.0" class="particle" />
+          <circle cx="82" cy="148" r="1.3" class="particle" />
+          <circle cx="48" cy="92" r="1.1" class="particle" />
+          <circle cx="85" cy="50" r="1.2" class="particle" />
+          <circle cx="138" cy="68" r="1.0" class="particle" />
+          <circle cx="128" cy="142" r="1.3" class="particle" />
+          <circle cx="50" cy="110" r="1.1" class="particle" />
+          <circle cx="110" cy="48" r="1.2" class="particle" />
+        </g>
+        
+        <g class="particle-group swarm-2">
+          <circle cx="150" cy="115" r="1.1" class="particle" />
+          <circle cx="115" cy="155" r="1.3" class="particle" />
+          <circle cx="55" cy="125" r="1.0" class="particle" />
+          <circle cx="62" cy="65" r="1.2" class="particle" />
+          <circle cx="120" cy="52" r="1.1" class="particle" />
+          <circle cx="95" cy="45" r="1.3" class="particle" />
+          <circle cx="141" cy="98" r="1.0" class="particle" />
+          <circle cx="75" cy="152" r="1.2" class="particle" />
+          <circle cx="70" cy="58" r="1.1" class="particle" />
+        </g>
+        
+        <g class="particle-group swarm-3">
+          <circle cx="128" cy="90" r="1.0" class="particle" />
+          <circle cx="122" cy="128" r="1.2" class="particle" />
+          <circle cx="88" cy="132" r="1.0" class="particle" />
+          <circle cx="68" cy="102" r="1.3" class="particle" />
+          <circle cx="82" cy="72" r="1.1" class="particle" />
+          <circle cx="118" cy="72" r="1.0" class="particle" />
+          <circle cx="112" cy="130" r="1.2" class="particle" />
+          <circle cx="70" cy="92" r="1.1" class="particle" />
+          <circle cx="120" cy="80" r="1.0" class="particle" />
+        </g>
+        
+        <g class="particle-group swarm-4">
+          <circle cx="132" cy="110" r="1.2" class="particle" />
+          <circle cx="105" cy="135" r="1.0" class="particle" />
+          <circle cx="72" cy="120" r="1.2" class="particle" />
+          <circle cx="72" cy="85" r="1.0" class="particle" />
+          <circle cx="100" cy="68" r="1.3" class="particle" />
+          <circle cx="125" cy="85" r="1.1" class="particle" />
+          <circle cx="80" cy="128" r="1.0" class="particle" />
+          <circle cx="90" cy="70" r="1.2" class="particle" />
+          <circle cx="125" cy="105" r="1.1" class="particle" />
+        </g>
+        
+        <g class="particle-group swarm-inner">
+          <circle cx="115" cy="95" r="0.9" class="particle" />
+          <circle cx="118" cy="105" r="0.8" class="particle" />
+          <circle cx="108" cy="116" r="0.9" class="particle" />
+          <circle cx="92" cy="114" r="0.8" class="particle" />
+          <circle cx="86" cy="105" r="0.9" class="particle" />
+          <circle cx="88" cy="92" r="0.8" class="particle" />
+          <circle cx="98" cy="86" r="0.9" class="particle" />
+          <circle cx="110" cy="88" r="0.8" class="particle" />
+          <circle cx="105" cy="92" r="1.0" class="particle" />
+          <circle cx="94" cy="102" r="1.0" class="particle" />
+          <circle cx="102" cy="110" r="1.0" class="particle" />
+          <circle cx="110" cy="100" r="1.0" class="particle" />
+          <circle cx="95" cy="95" r="1.1" class="particle" />
+          <circle cx="100" cy="100" r="2.0" class="particle particle-center" />
+        </g>
       </svg>
+
       
       <!-- Central Core Readout Overlay -->
       <div class="core-readout">
@@ -180,7 +195,7 @@
     </div>
 
     <!-- Inputs & Control Area -->
-    <div class="control-panel glass-panel">
+    <div class="control-panel">
       <div class="input-container">
         <div class="input-border-decoration"></div>
         <textarea 
