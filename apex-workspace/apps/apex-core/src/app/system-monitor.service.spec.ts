@@ -7,6 +7,11 @@ jest.mock('systeminformation', () => ({
   mem: jest.fn().mockResolvedValue({ active: 4000, total: 16000 }),
 }));
 
+jest.mock('os', () => ({
+  totalmem: () => 16000,
+  freemem: () => 12000,
+}));
+
 describe('SystemMonitorService', () => {
   let service: SystemMonitorService;
 
