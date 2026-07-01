@@ -5,3 +5,9 @@ export interface ApexStreamChunk {
   done: boolean;
   state?: ApexState;
 }
+
+export interface SystemMetrics {
+  cpu: number;
+  ram: number;
+}
+
