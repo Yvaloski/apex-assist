@@ -426,6 +426,34 @@
   animation: spin-clockwise 16s linear infinite;
 }
 
+.geom-reticle {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 1px;
+  opacity: 0.5;
+  transform-origin: 100px 100px;
+  animation: spin-counter-clockwise 10s linear infinite;
+  transition: stroke 0.5s ease;
+}
+
+.geom-reticle-outer {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 1px;
+  opacity: 0.3;
+  transform-origin: 100px 100px;
+  animation: spin-clockwise 15s linear infinite;
+  transition: stroke 0.5s ease;
+}
+
+.reticle-tick {
+  stroke: var(--color-primary);
+  stroke-width: 1px;
+  opacity: 0.6;
+  transition: stroke 0.5s ease;
+}
+
+
 .core-inner {
   fill: var(--color-idle);
   opacity: 0.85;
@@ -472,6 +500,13 @@
   filter: drop-shadow(0 0 12px var(--color-accent-thinking));
 }
 
+.core-orb-container.thinking .geom-reticle,
+.core-orb-container.thinking .geom-reticle-outer,
+.core-orb-container.thinking .reticle-tick {
+  stroke: var(--color-accent-thinking);
+}
+
+
 /* LISTENING State */
 .core-orb-container.listening .glow-backdrop {
   background-color: var(--color-accent-listening);
@@ -511,6 +546,13 @@
 .core-orb-container.listening .ring-wave-2 {
   animation: wave-expand-2 2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite 1s;
 }
+
+.core-orb-container.listening .geom-reticle,
+.core-orb-container.listening .geom-reticle-outer,
+.core-orb-container.listening .reticle-tick {
+  stroke: var(--color-accent-listening);
+}
+
 
 /* Digital Overlay Readout on Orb */
 .core-readout {

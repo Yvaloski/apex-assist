@@ -157,8 +157,14 @@
         <!-- Main central breathing sphere -->
         <circle cx="100" cy="100" r="38" class="core-sphere" />
 
-        <!-- Tech/geometric overlays -->
-        <polygon points="100,72 124,114 76,114" class="core-geom geom-triangle" />
+        <!-- Tech/geometric overlays: Minimalist Cyberpunk Reticle -->
+        <circle cx="100" cy="100" r="18" class="core-geom geom-reticle" stroke-dasharray="3 5" />
+        <circle cx="100" cy="100" r="28" class="core-geom geom-reticle-outer" stroke-dasharray="8 8" />
+        <line x1="100" y1="76" x2="100" y2="82" class="reticle-tick" />
+        <line x1="100" y1="118" x2="100" y2="124" class="reticle-tick" />
+        <line x1="76" y1="100" x2="82" y2="100" class="reticle-tick" />
+        <line x1="118" y1="100" x2="124" y2="100" class="reticle-tick" />
+
         <circle cx="100" cy="100" r="12" class="core-inner" />
         <line x1="100" y1="25" x2="100" y2="40" class="axis-line" />
         <line x1="100" y1="160" x2="100" y2="175" class="axis-line" />
