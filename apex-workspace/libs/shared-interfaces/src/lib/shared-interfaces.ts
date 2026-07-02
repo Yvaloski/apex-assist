@@ -6,6 +6,13 @@ export interface ApexStreamChunk {
   state?: ApexState;
 }
 
+export interface ProcessInfo {
+  pid: number;
+  name: string;
+  cpu: number;
+  mem: number;
+}
+
 export interface SystemMetrics {
   cpu: number;
   ram: number;
@@ -14,5 +21,6 @@ export interface SystemMetrics {
   cpuLoadAvg?: number;
   ramTotal?: number;
   ramUsed?: number;
+  topProcesses?: ProcessInfo[];
 }
 

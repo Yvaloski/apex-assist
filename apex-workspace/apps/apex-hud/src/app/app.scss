@@ -277,6 +277,52 @@ body {
   font-size: 0.7rem;
 }
 
+.process-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.68rem;
+  background: rgba(0, 229, 255, 0.02);
+  border: 1px solid rgba(0, 229, 255, 0.1);
+  padding: 6px;
+  margin-top: 4px;
+
+  .process-header {
+    display: grid;
+    grid-template-columns: 40px 1fr 45px 45px;
+    font-weight: bold;
+    color: var(--color-cyan);
+    border-bottom: 1px dashed rgba(0, 229, 255, 0.2);
+    padding-bottom: 2px;
+    margin-bottom: 2px;
+  }
+
+  .process-item {
+    display: grid;
+    grid-template-columns: 40px 1fr 45px 45px;
+    color: rgba(255, 255, 255, 0.85);
+
+    .proc-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: 4px;
+    }
+
+    .proc-cpu {
+      color: #ff5252;
+      text-align: right;
+      padding-right: 4px;
+    }
+
+    .proc-mem {
+      color: var(--color-cyan);
+      text-align: right;
+      padding-right: 4px;
+    }
+  }
+}
+
 .center-stage {
   display: flex;
   flex-direction: column;

@@ -28,17 +28,28 @@ export class SystemMonitorService {
       const cpus = os.cpus();
       const cpuSpeed = cpus && cpus.length > 0 ? cpus[0].speed / 1000 : 4.0;
 
-      // 3. CPU Load and Temp with fallbacks
+      // 3. CPU Load, Temp, and Active Processes with fallbacks
       return from(Promise.all([
         si.currentLoad(),
-        si.cpuTemperature().catch(() => ({ main: 0 }))
+        si.cpuTemperature().catch(() => ({ main: 0 })),
+        si.processes().catch(() => ({ list: [] }))
       ])).pipe(
-        timeout(800),
-        concatMap(([cpuData, tempData]) => {
+        timeout(900),
+        concatMap(([cpuData, tempData, processData]) => {
           this.lastCpu = cpuData.currentLoad;
           const cpuTemp = tempData.main || 48.0;
           const rawLoad = os.loadavg()[0];
           const cpuLoadAvg = rawLoad > 0 ? rawLoad : (this.lastCpu * cpus.length) / 100 || 0.5;
+
+          const topProcesses = (processData.list || [])
+            .sort((a, b) => b.cpu - a.cpu)
+            .slice(0, 5)
+            .map(p => ({
+              pid: p.pid,
+              name: p.name,
+              cpu: p.cpu,
+              mem: p.mem
+            }));
 
           return of({
             cpu: this.lastCpu,
@@ -47,7 +58,8 @@ export class SystemMonitorService {
             cpuTemp,
             cpuLoadAvg,
             ramTotal,
-            ramUsed
+            ramUsed,
+            topProcesses
           });
         }),
         catchError((error) => {
@@ -61,7 +73,8 @@ export class SystemMonitorService {
             cpuTemp: 48.0,
             cpuLoadAvg,
             ramTotal,
-            ramUsed
+            ramUsed,
+            topProcesses: []
           });
         })
       );

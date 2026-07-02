@@ -65,6 +65,27 @@ import { ApexStateService } from '../services/apex-state.service';
           <div>PACKET_LOSS: {{ networkMetrics().packetLoss | number:'1.2-2' }}%</div>
         </div>
       </div>
+
+      <div class="cli-monitor-section processes-section" *ngIf="systemMetrics().topProcesses?.length">
+        <div class="cli-header-row">
+          <span class="cli-title">ACTIVE_PROCESS_MONITOR</span>
+          <span class="cli-status-text">TOP_CPU</span>
+        </div>
+        <div class="process-list">
+          <div class="process-header">
+            <span class="proc-pid">PID</span>
+            <span class="proc-name">NAME</span>
+            <span class="proc-cpu">CPU</span>
+            <span class="proc-mem">MEM</span>
+          </div>
+          <div class="process-item" *ngFor="let proc of systemMetrics().topProcesses">
+            <span class="proc-pid">{{ proc.pid }}</span>
+            <span class="proc-name">{{ proc.name }}</span>
+            <span class="proc-cpu">{{ proc.cpu | number:'1.0-1' }}%</span>
+            <span class="proc-mem">{{ proc.mem | number:'1.0-1' }}%</span>
+          </div>
+        </div>
+      </div>
     </div>
   `,
 })
