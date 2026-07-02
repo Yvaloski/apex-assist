@@ -1,80 +1,73 @@
-import { Component, inject, signal, computed, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import {
+  Component,
+  signal,
+  ViewChild,
+  ElementRef,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApexStateService } from './services/apex-state.service';
-import { SpeechRecognitionService } from './services/speech-recognition.service';
+import { ApexState } from '@apex-workspace/shared-interfaces';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  styleUrls: ['./app.scss'],
 })
-export class App implements AfterViewChecked {
-  private readonly stateService = inject(ApexStateService);
-  private readonly speechService = inject(SpeechRecognitionService);
+export class AppComponent {
+  @ViewChild('responseContainer')
+  responseContainer!: ElementRef<HTMLDivElement>;
 
-  @ViewChild('responseContainer') private responseContainer!: ElementRef;
+  state = signal<ApexState>('IDLE');
+  promptText = '';
+  currentResponse = signal<string>('');
+  systemMetrics = signal({ cpu: 14.5, ram: 62.8 });
+  isSpeechSupported = true;
 
-  // Title for tests and identification
-  public readonly title = 'apex-hud';
-
-  // Bind signals from global state
-  public readonly state = this.stateService.state;
-  public readonly currentResponse = this.stateService.currentResponse;
-  public readonly systemMetrics = this.stateService.systemMetrics;
-
-  // Local UI state
-  public promptText = '';
-  public readonly isSpeechSupported = this.speechService.isSupported();
-
-  // Computed state class for dynamic color themes
-  public readonly stateClass = computed(() => {
-    const s = this.state();
-    return s.toLowerCase();
-  });
-
-  public readonly stateLabel = computed(() => {
-    const s = this.state();
-    switch (s) {
-      case 'THINKING':
-        return 'PROCESSING QUERY...';
-      case 'LISTENING':
-        return 'CAPTURING AUDIO...';
-      default:
-        return 'SYSTEM ONLINE';
-    }
-  });
-
-  ngAfterViewChecked() {
-    this.scrollToBottom();
-  }
-
-  public sendPrompt(): void {
-    const text = this.promptText.trim();
-    if (!text) return;
-    this.stateService.sendPrompt(text);
-    this.promptText = '';
-  }
-
-  public toggleSpeech(): void {
-    if (this.state() === 'LISTENING') {
-      this.speechService.stop();
-      this.stateService.setState('IDLE');
-    } else {
-      this.speechService.start();
-    }
-  }
-
-  private scrollToBottom(): void {
-    try {
-      if (this.responseContainer) {
-        this.responseContainer.nativeElement.scrollTop = this.responseContainer.nativeElement.scrollHeight;
+  constructor() {
+    effect(() => {
+      if (this.currentResponse() && this.responseContainer) {
+        setTimeout(() => {
+          const container = this.responseContainer.nativeElement;
+          container.scrollTop = container.scrollHeight;
+        }, 0);
       }
-    } catch (err) {
-      // Ignore
+    });
+  }
+
+  stateLabel(): string {
+    switch (this.state()) {
+      case 'LISTENING':
+        return 'VOX_ACTIVE_LISTENING';
+      case 'THINKING':
+        return 'COGNITIVE_PROCESSING';
+
+      case 'IDLE':
+      default:
+        return 'SYSTEM_READY_AWAITING_INPUT';
     }
+  }
+
+  stateClass(): string {
+    return `state-${this.state().toLowerCase()}`;
+  }
+
+  sendPrompt() {
+    if (!this.promptText.trim()) return;
+    this.state.set('THINKING');
+    this.currentResponse.set(
+      `[CORE_LINK] TRANSMITTING DIRECTIVE...\n[APEX] COGNITIVE ENGINE ENGAGED.`,
+    );
+    this.promptText = '';
+
+    setTimeout(() => {
+      this.state.set('IDLE');
+    }, 4000);
+  }
+
+  toggleSpeech() {
+    this.state.set(this.state() === 'LISTENING' ? 'IDLE' : 'LISTENING');
   }
 }
-

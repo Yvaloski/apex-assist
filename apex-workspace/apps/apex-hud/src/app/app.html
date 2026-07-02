@@ -1,290 +1,181 @@
-<header class="hud-header">
-  <div class="header-left">
-    <div class="logo-box">
-      <span class="logo-symbol">▲</span>
-      <h1 class="hud-main-title">Welcome apex-hud</h1>
-    </div>
-    <div class="network-badge">
-      <span class="pulse-dot"></span>
-      <span class="badge-text">CORE_WS: ESTABLISHED</span>
-    </div>
-  </div>
-  <div class="header-right">
-    <div class="sys-time">
-      <span class="label">SYS_STATUS:</span>
-      <span class="value">{{ stateLabel() }}</span>
-    </div>
-    <div class="state-status-badge" [ngClass]="stateClass()">
-      <span class="state-label">{{ state() }}</span>
-    </div>
-  </div>
-</header>
+<div class="container palette-3">
+  <div class="hud-interface-wrapper">
 
-<main class="hud-main-grid">
-  <!-- LEFT: System Telemetry Panel -->
-  <section class="widget-panel system-metrics-panel">
-    <div class="widget-header">
-      <span class="widget-title">TELEMETRY_MONITOR</span>
-      <span class="widget-subtitle">REAL-TIME HARDWARE SENSORS</span>
-    </div>
-    
-    <div class="widget-body metrics-body">
-      <!-- CPU Monitor -->
-      <div class="cli-monitor-section">
-        <div class="cli-header-row">
-          <span class="cli-title">CPU_LOAD_SENSORS</span>
-          <span class="cli-status-text">ONLINE</span>
+    <header class="hud-header">
+      <div class="header-left">
+        <div class="logo-box">
+          <span class="logo-symbol">▲</span>
+          <h1 class="hud-main-title">APEX // DIGITAL_HUD</h1>
         </div>
-        <div class="cli-bar-row">
-          <span class="cli-bar-label">CPU [</span>
-          <div class="cli-bar-outer">
-            <div class="cli-bar-inner" [style.width.%]="systemMetrics().cpu"></div>
-          </div>
-          <span class="cli-bar-label">]</span>
-          <span class="cli-value-text">{{ systemMetrics().cpu | number:'1.1-1' }}%</span>
-        </div>
-        <div class="cli-details-grid">
-          <div class="cli-detail-item">
-            <span class="lbl">CLOCK_SPEED:</span>
-            <span class="val">4.21 GHz</span>
-          </div>
-          <div class="cli-detail-item">
-            <span class="lbl">CORE_TEMP:</span>
-            <span class="val">54.0°C</span>
-          </div>
-          <div class="cli-detail-item">
-            <span class="lbl">THREAD_POOL:</span>
-            <span class="val">ACTIVE</span>
-          </div>
-          <div class="cli-detail-item">
-            <span class="lbl">LOAD_AVG:</span>
-            <span class="val">1.45</span>
-          </div>
+        <div class="network-badge">
+          <span class="pulse-dot"></span>
+          <span class="badge-text">CORE_WS: ESTABLISHED</span>
         </div>
       </div>
-
-      <!-- RAM Monitor -->
-      <div class="cli-monitor-section">
-        <div class="cli-header-row">
-          <span class="cli-title">MEM_ALLOCATION</span>
-          <span class="cli-status-text">OPTIMIZED</span>
+      <div class="header-right">
+        <div class="sys-time">
+          <span class="label">SYS_STATUS:</span>
+          <span class="value">{{ stateLabel() }}</span>
         </div>
-        <div class="cli-bar-row">
-          <span class="cli-bar-label">RAM [</span>
-          <div class="cli-bar-outer">
-            <div class="cli-bar-inner" [style.width.%]="systemMetrics().ram"></div>
-          </div>
-          <span class="cli-bar-label">]</span>
-          <span class="cli-value-text">{{ systemMetrics().ram | number:'1.1-1' }}%</span>
-        </div>
-        <div class="cli-details-grid">
-          <div class="cli-detail-item">
-            <span class="lbl">USED_CAP:</span>
-            <span class="val">{{ (16 * systemMetrics().ram / 100) | number:'1.1-1' }} GB</span>
-          </div>
-          <div class="cli-detail-item">
-            <span class="lbl">MAX_CAP:</span>
-            <span class="val">16.0 GB</span>
-          </div>
-          <div class="cli-detail-item">
-            <span class="lbl">SWAP_FILE:</span>
-            <span class="val">0.0 GB</span>
-          </div>
-          <div class="cli-detail-item">
-            <span class="lbl">CACHE_BUF:</span>
-            <span class="val">4.1 GB</span>
-          </div>
+        <div class="state-status-badge" [ngClass]="stateClass()">
+          <span class="state-label">{{ state() }}</span>
         </div>
       </div>
+    </header>
 
-      <!-- Additional Diagnostics -->
-      <div class="cli-monitor-section diagnostic-section">
-        <div class="cli-header-row">
-          <span class="cli-title">NETWORK_DIAGNOSTICS</span>
+    <main class="hud-main-grid">
+
+      <section class="widget-panel system-metrics-panel">
+        <div class="widget-header">
+          <span class="widget-title">TELEMETRY_MONITOR</span>
+          <span class="widget-subtitle">REAL-TIME HARDWARE SENSORS</span>
         </div>
-        <div class="diagnostic-lines">
-          <div>NODE_ADDR: 127.0.0.1:4200</div>
-          <div>WS_LATENCY: 4ms</div>
-          <div>BUFFER_STATUS: NOMINAL</div>
-          <div>PACKET_LOSS: 0.00%</div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- CENTER: SVG Core + Controls -->
-  <section class="center-stage">
-    <div class="core-orb-container" [ngClass]="stateClass()">
-      <div class="glow-backdrop"></div>
-      
-      <!-- SVG Animated Particle Core -->
-      <svg viewBox="0 0 200 200" class="core-svg">
-        <!-- Organic scattered particle swarms -->
-        <g class="particle-group swarm-1">
-          <circle cx="145" cy="80" r="1.2" class="particle" />
-          <circle cx="135" cy="138" r="1.0" class="particle" />
-          <circle cx="82" cy="148" r="1.3" class="particle" />
-          <circle cx="48" cy="92" r="1.1" class="particle" />
-          <circle cx="85" cy="50" r="1.2" class="particle" />
-          <circle cx="138" cy="68" r="1.0" class="particle" />
-          <circle cx="128" cy="142" r="1.3" class="particle" />
-          <circle cx="50" cy="110" r="1.1" class="particle" />
-          <circle cx="110" cy="48" r="1.2" class="particle" />
-        </g>
-        
-        <g class="particle-group swarm-2">
-          <circle cx="150" cy="115" r="1.1" class="particle" />
-          <circle cx="115" cy="155" r="1.3" class="particle" />
-          <circle cx="55" cy="125" r="1.0" class="particle" />
-          <circle cx="62" cy="65" r="1.2" class="particle" />
-          <circle cx="120" cy="52" r="1.1" class="particle" />
-          <circle cx="95" cy="45" r="1.3" class="particle" />
-          <circle cx="141" cy="98" r="1.0" class="particle" />
-          <circle cx="75" cy="152" r="1.2" class="particle" />
-          <circle cx="70" cy="58" r="1.1" class="particle" />
-        </g>
-        
-        <g class="particle-group swarm-3">
-          <circle cx="128" cy="90" r="1.0" class="particle" />
-          <circle cx="122" cy="128" r="1.2" class="particle" />
-          <circle cx="88" cy="132" r="1.0" class="particle" />
-          <circle cx="68" cy="102" r="1.3" class="particle" />
-          <circle cx="82" cy="72" r="1.1" class="particle" />
-          <circle cx="118" cy="72" r="1.0" class="particle" />
-          <circle cx="112" cy="130" r="1.2" class="particle" />
-          <circle cx="70" cy="92" r="1.1" class="particle" />
-          <circle cx="120" cy="80" r="1.0" class="particle" />
-        </g>
-        
-        <g class="particle-group swarm-4">
-          <circle cx="132" cy="110" r="1.2" class="particle" />
-          <circle cx="105" cy="135" r="1.0" class="particle" />
-          <circle cx="72" cy="120" r="1.2" class="particle" />
-          <circle cx="72" cy="85" r="1.0" class="particle" />
-          <circle cx="100" cy="68" r="1.3" class="particle" />
-          <circle cx="125" cy="85" r="1.1" class="particle" />
-          <circle cx="80" cy="128" r="1.0" class="particle" />
-          <circle cx="90" cy="70" r="1.2" class="particle" />
-          <circle cx="125" cy="105" r="1.1" class="particle" />
-        </g>
-        
-        <g class="particle-group swarm-inner">
-          <circle cx="115" cy="95" r="0.9" class="particle" />
-          <circle cx="118" cy="105" r="0.8" class="particle" />
-          <circle cx="108" cy="116" r="0.9" class="particle" />
-          <circle cx="92" cy="114" r="0.8" class="particle" />
-          <circle cx="86" cy="105" r="0.9" class="particle" />
-          <circle cx="88" cy="92" r="0.8" class="particle" />
-          <circle cx="98" cy="86" r="0.9" class="particle" />
-          <circle cx="110" cy="88" r="0.8" class="particle" />
-          <circle cx="105" cy="92" r="1.0" class="particle" />
-          <circle cx="94" cy="102" r="1.0" class="particle" />
-          <circle cx="102" cy="110" r="1.0" class="particle" />
-          <circle cx="110" cy="100" r="1.0" class="particle" />
-          <circle cx="95" cy="95" r="1.1" class="particle" />
-          <circle cx="100" cy="100" r="2.0" class="particle particle-center" />
-        </g>
-      </svg>
-
-      
-      <!-- Central Core Readout Overlay -->
-      <div class="core-readout">
-        <div class="digital-label">COGNITIVE_CORE</div>
-        <div class="digital-state">{{ state() }}</div>
-      </div>
-    </div>
-
-    <!-- Inputs & Control Area -->
-    <div class="control-panel">
-      <div class="input-container">
-        <div class="input-border-decoration"></div>
-        <textarea 
-          [(ngModel)]="promptText" 
-          (keydown.enter)="$event.preventDefault(); sendPrompt()"
-          placeholder="ENTER COGNITIVE DIRECTIVE (PRESS ENTER TO TRANSMIT)..." 
-          class="hud-textarea">
-        </textarea>
-        
-        <div class="button-group">
-          <button 
-            *ngIf="isSpeechSupported"
-            (click)="toggleSpeech()" 
-            [class.active]="state() === 'LISTENING'"
-            class="hud-button speech-button"
-            type="button"
-            title="Voice Recognition">
-            <svg viewBox="0 0 24 24" class="btn-icon">
-              <path fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/>
-            </svg>
-            <span>{{ state() === 'LISTENING' ? 'VOX_ON (STOP)' : 'ACTIVATE VOX' }}</span>
-          </button>
-          
-          <button 
-            (click)="sendPrompt()" 
-            [disabled]="!promptText.trim()"
-            class="hud-button submit-button"
-            type="button">
-            <svg viewBox="0 0 24 24" class="btn-icon">
-              <path fill="currentColor" d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
-            </svg>
-            <span>TRANSMIT DIRECTIVE</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- RIGHT: AI Streaming Response Console -->
-  <section class="widget-panel streaming-text-panel">
-    <div class="widget-header">
-      <span class="widget-title">COGNITIVE_LOGSTREAM</span>
-      <span class="widget-subtitle">LIVE AI COGNITION STREAM</span>
-    </div>
-    
-    <div class="widget-body console-body" #responseContainer>
-      <div class="console-overlay"></div>
-      <div class="console-border-decorations">
-        <span class="corner-decor top-left"></span>
-        <span class="corner-decor top-right"></span>
-        <span class="corner-decor bottom-left"></span>
-        <span class="corner-decor bottom-right"></span>
-      </div>
-
-      <div class="console-scroll-wrapper">
-        <div class="console-lines" *ngIf="currentResponse(); else emptyPrompt">
-          <div class="console-metadata">
-            <span class="tag-secure">SECURE_LINK</span>
-            <span class="time-stamp">PACKETS_RECVD: {{ currentResponse().length }} B</span>
-          </div>
-          <p class="console-text">{{ currentResponse() }}<span class="console-cursor" *ngIf="state() === 'THINKING'">█</span></p>
-        </div>
-        
-        <ng-template #emptyPrompt>
-          <div class="console-empty">
-            <div class="glitch-text" data-text="AWAITING DIRECTIVE">AWAITING DIRECTIVE</div>
-            <div class="sub-empty">ESTABLISH INPUT OR ENABLE VOX SYSTEM...</div>
-            <div class="tech-stats">
-              <div>HOST: LOCAL_NODE_01</div>
-              <div>MODEL: OLLAMA_LLM_HOST</div>
-              <div>PROTO: WEBSOCKET_SECURE</div>
+        <div class="widget-body metrics-body">
+          <div class="cli-monitor-section">
+            <div class="cli-header-row">
+              <span class="cli-title">CPU_LOAD_SENSORS</span>
+              <span class="cli-status-text">ONLINE</span>
+            </div>
+            <div class="cli-bar-row">
+              <span class="cli-bar-label">CPU [</span>
+              <div class="cli-bar-outer">
+                <div class="cli-bar-inner" [style.width.%]="systemMetrics().cpu"></div>
+              </div>
+              <span class="cli-bar-label">]</span>
+              <span class="cli-value-text">{{ systemMetrics().cpu | number:'1.1-1' }}%</span>
+            </div>
+            <div class="cli-details-grid">
+              <div class="cli-detail-item"><span class="lbl">CLOCK_SPEED:</span><span class="val">4.21 GHz</span></div>
+              <div class="cli-detail-item"><span class="lbl">CORE_TEMP:</span><span class="val">54.0°C</span></div>
+              <div class="cli-detail-item"><span class="lbl">THREAD_POOL:</span><span class="val">ACTIVE</span></div>
+              <div class="cli-detail-item"><span class="lbl">LOAD_AVG:</span><span class="val">1.45</span></div>
             </div>
           </div>
-        </ng-template>
-      </div>
-    </div>
-  </section>
-</main>
 
-<footer class="hud-footer">
-  <div class="footer-left">
-    <span>SYSTEM: APEX_V1.0.0</span>
-    <span class="divider">|</span>
-    <span>ENCRYPTION: AES_256_GCM</span>
+          <div class="cli-monitor-section">
+            <div class="cli-header-row">
+              <span class="cli-title">MEM_ALLOCATION</span>
+              <span class="cli-status-text">OPTIMIZED</span>
+            </div>
+            <div class="cli-bar-row">
+              <span class="cli-bar-label">RAM [</span>
+              <div class="cli-bar-outer">
+                <div class="cli-bar-inner" [style.width.%]="systemMetrics().ram"></div>
+              </div>
+              <span class="cli-bar-label">]</span>
+              <span class="cli-value-text">{{ systemMetrics().ram | number:'1.1-1' }}%</span>
+            </div>
+            <div class="cli-details-grid">
+              <div class="cli-detail-item"><span class="lbl">USED_CAP:</span><span class="val">{{ (16 * systemMetrics().ram / 100) | number:'1.1-1' }} GB</span></div>
+              <div class="cli-detail-item"><span class="lbl">MAX_CAP:</span><span class="val">16.0 GB</span></div>
+              <div class="cli-detail-item"><span class="lbl">SWAP_FILE:</span><span class="val">0.0 GB</span></div>
+              <div class="cli-detail-item"><span class="lbl">CACHE_BUF:</span><span class="val">4.1 GB</span></div>
+            </div>
+          </div>
+
+          <div class="cli-monitor-section diagnostic-section">
+            <div class="cli-header-row"><span class="cli-title">NETWORK_DIAGNOSTICS</span></div>
+            <div class="diagnostic-lines">
+              <div>NODE_ADDR: 127.0.0.1:4200</div>
+              <div>WS_LATENCY: 4ms</div>
+              <div>BUFFER_STATUS: NOMINAL</div>
+              <div>PACKET_LOSS: 0.00%</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="center-stage">
+        <div class="core-orb-container" [ngClass]="stateClass()">
+          <div class="glow-backdrop"></div>
+
+          <div class="blobs">
+            <svg viewBox="0 0 1200 1200">
+              <g class="blob blob-1"><path /></g>
+              <g class="blob blob-2"><path /></g>
+              <g class="blob blob-3"><path /></g>
+              <g class="blob blob-4"><path /></g>
+              <g class="blob blob-1 alt"><path /></g>
+              <g class="blob blob-2 alt"><path /></g>
+              <g class="blob blob-3 alt"><path /></g>
+              <g class="blob blob-4 alt"><path /></g>
+            </svg>
+          </div>
+
+          <div class="core-readout">
+            <div class="digital-label">COGNITIVE_CORE</div>
+            <div class="digital-state">{{ state() }}</div>
+          </div>
+        </div>
+
+        <div class="control-panel">
+          <div class="input-container">
+            <textarea
+              [(ngModel)]="promptText"
+              (keydown.enter)="$event.preventDefault(); sendPrompt()"
+              placeholder="ENTER COGNITIVE DIRECTIVE (PRESS ENTER TO TRANSMIT)..."
+              class="hud-textarea">
+            </textarea>
+            <div class="button-group">
+              <button *ngIf="isSpeechSupported" (click)="toggleSpeech()" [class.active]="state() === 'LISTENING'" class="hud-button speech-button" type="button">
+                <svg viewBox="0 0 24 24" class="btn-icon"><path fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/></svg>
+                <span>{{ state() === 'LISTENING' ? 'VOX_ON (STOP)' : 'ACTIVATE VOX' }}</span>
+              </button>
+              <button (click)="sendPrompt()" [disabled]="!promptText.trim()" class="hud-button submit-button" type="button">
+                <svg viewBox="0 0 24 24" class="btn-icon"><path fill="currentColor" d="M2,21L23,12L2,3V10L17,12L2,14V21Z" /></svg>
+                <span>TRANSMIT DIRECTIVE</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="widget-panel streaming-text-panel">
+        <div class="widget-header">
+          <span class="widget-title">COGNITIVE_LOGSTREAM</span>
+          <span class="widget-subtitle">LIVE AI COGNITION STREAM</span>
+        </div>
+
+        <div class="widget-body console-body" #responseContainer>
+          <div class="console-overlay"></div>
+          <div class="console-scroll-wrapper">
+            <div class="console-lines" *ngIf="currentResponse(); else emptyPrompt">
+              <div class="console-metadata">
+                <span class="tag-secure">SECURE_LINK</span>
+                <span class="time-stamp">NODE_OK</span>
+              </div>
+              <p class="console-text">{{ currentResponse() }}<span class="console-cursor">█</span></p>
+            </div>
+
+            <ng-template #emptyPrompt>
+              <div class="console-empty">
+                <div class="glitch-text">AWAITING DIRECTIVE</div>
+                <div class="sub-empty">ESTABLISH INPUT OR ENABLE VOX SYSTEM...</div>
+                <div class="tech-stats">
+                  <div>HOST: LOCAL_NODE_01</div>
+                  <div>MODEL: OLLAMA_LLM_HOST</div>
+                  <div>PROTO: WEBSOCKET_SECURE</div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="hud-footer">
+      <div class="footer-left">
+        <span>SYSTEM: APEX_V1.0.0</span>
+        <span class="divider">|</span>
+        <span>ENCRYPTION: AES_256_GCM</span>
+      </div>
+      <div class="footer-center">
+        <span>STATUS_OK // DATA_STREAM_STABLE // READY</span>
+      </div>
+      <div class="footer-right">
+        <span>© 2026 DEEPMIND // APEX_COGNITION</span>
+      </div>
+    </footer>
   </div>
-  <div class="footer-center">
-    <span class="hud-ticker">STATUS_OK // DATA_STREAM_STABLE // READY</span>
-  </div>
-  <div class="footer-right">
-    <span>© 2026 DEEPMIND // APEX_COGNITION</span>
-  </div>
-</footer>
+</div>
