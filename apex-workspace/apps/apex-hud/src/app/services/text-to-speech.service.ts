@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -7,6 +7,16 @@ export class TextToSpeechService {
   private sentenceBuffer = '';
   private availableVoices: SpeechSynthesisVoice[] = [];
   private activeUtterances = new Set<SpeechSynthesisUtterance>();
+
+  private readonly _isMuted = signal(false);
+  public readonly isMuted = this._isMuted.asReadonly();
+
+  public toggleMute(): void {
+    this._isMuted.update(m => !m);
+    if (this._isMuted()) {
+      this.cancel();
+    }
+  }
 
   constructor() {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
@@ -90,7 +100,7 @@ export class TextToSpeechService {
    * Build and queue a SpeechSynthesisUtterance.
    */
   private speakSentence(text: string): void {
-    if (!text) return;
+    if (!text || this.isMuted()) return;
     try {
       if (typeof window === 'undefined' || !window.speechSynthesis) {
         return;
@@ -101,7 +111,16 @@ export class TextToSpeechService {
         window.speechSynthesis.resume();
       }
 
-      const utterance = new SpeechSynthesisUtterance(text);
+      // Clean markdown tags and brackets so they aren't spoken aloud
+      const cleanedText = text
+        .replace(/[*_#`~]/g, '')
+        .replace(/\[.*?\]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (!cleanedText) return;
+
+      const utterance = new SpeechSynthesisUtterance(cleanedText);
       
       if (this.availableVoices.length === 0 && typeof window.speechSynthesis.getVoices === 'function') {
         this.availableVoices = window.speechSynthesis.getVoices();
