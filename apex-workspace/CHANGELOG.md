@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Yvaloski/apex-assist/compare/v1.2.0...v1.3.0) (2026-07-02)
+
+
+### Features
+
+* implement ReAct tool calling execution loop for filesystem and commands ([b22c7b5](https://github.com/Yvaloski/apex-assist/commit/b22c7b553a7c1a0543d4ecad183b9ad1f69c18c6))
+
 # [1.2.0](https://github.com/Yvaloski/apex-assist/compare/v1.1.0...v1.2.0) (2026-07-02)
 
 
