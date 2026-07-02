@@ -37,7 +37,7 @@ export class AiService {
     }
   }
 
-  private getSystemPrompt(userPrompt = ''): string {
+  private getSystemPrompt(): string {
     const memories = this.readMemories();
     const memoryString = memories.length > 0
       ? memories.map((m, idx) => `${idx + 1}. ${m}`).join('\n')
@@ -45,7 +45,7 @@ export class AiService {
 
     let toolGuidance = '';
     const cleanUserPrompt = userPrompt.toLowerCase();
-    
+
     if (cleanUserPrompt.includes('list') || cleanUserPrompt.includes('ls ') || cleanUserPrompt.includes('liste') || cleanUserPrompt.includes('dir')) {
       toolGuidance = `\n\nCRITICAL: The user wants to see the contents of a directory. You must use the tool syntax: \`[CMD: list_dir <path>]\` (usually \`[CMD: list_dir .]\` for the root workspace). Do not apologize or say you cannot access files; output the command tag immediately.`;
     } else if (cleanUserPrompt.includes('read') || cleanUserPrompt.includes('cat ') || cleanUserPrompt.includes('lire') || cleanUserPrompt.includes('contenu') || cleanUserPrompt.includes('affiche le fichier')) {
@@ -55,6 +55,7 @@ export class AiService {
     }
 
     return `You are APEX (Advanced Programmed Executive), a futuristic digital HUD AI assistant.
+NOTE: You are NOT Oracle Application Express (APEX). You have absolutely nothing to do with Oracle databases, Oracle APEX cloud services, SQL Workshop, or Oracle Application Development. Do not talk about Oracle APEX unless the user explicitly requests Oracle database help. Always act as the local desktop HUD assistant.
 Current Time: ${new Date().toLocaleString()}
 
 SKILLS & CAPABILITIES:
@@ -307,7 +308,9 @@ INSTRUCTIONS:
    * Falls back to a mock stream if Ollama is offline.
    */
   public generate(prompt: string): Observable<ApexStreamChunk> {
-    const cleanPrompt = prompt.trim();
+    let cleanPrompt = prompt.trim();
+    // Strip leading "APEX" prefix to avoid LLM association with Oracle APEX
+    cleanPrompt = cleanPrompt.replace(/^apex\s*[,:]*\s*/i, '').trim();
     // Match remember commands in English/French
     const rememberRegex = /^(?:remember|souviens-toi\s+(?:de\s+|que\s+|qu')|enregistre|garde\s+en\s+mémoire)\s*[:\s]\s*(.+)$/i;
     const match = rememberRegex.exec(cleanPrompt);
@@ -390,12 +393,12 @@ INSTRUCTIONS:
 
       (async () => {
         try {
-          const system = this.getSystemPrompt(prompt);
-          await this.runGeneratorLoop(prompt, system, subscriber, () => isCancelled);
+          const system = this.getSystemPrompt(cleanPrompt);
+          await this.runGeneratorLoop(cleanPrompt, system, subscriber, () => isCancelled);
         } catch (error: any) {
           this.logger.error(`Ollama stream loop error: ${error?.message || error}. Falling back to Mock Stream.`);
           if (!isCancelled) {
-            this.getMockStream(prompt).subscribe(subscriber);
+            this.getMockStream(cleanPrompt).subscribe(subscriber);
           }
         }
       })();
