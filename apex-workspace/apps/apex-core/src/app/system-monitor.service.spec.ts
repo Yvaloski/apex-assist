@@ -6,6 +6,7 @@ jest.mock('systeminformation', () => ({
   currentLoad: jest.fn().mockResolvedValue({ currentLoad: 25.5 }),
   mem: jest.fn().mockResolvedValue({ active: 4000, total: 16000 }),
   cpuTemperature: jest.fn().mockResolvedValue({ main: 48.0 }),
+  processes: jest.fn().mockResolvedValue({ list: [{ pid: 101, name: 'node', cpu: 5.5, mem: 2.3 }] }),
 }));
 
 jest.mock('os', () => ({

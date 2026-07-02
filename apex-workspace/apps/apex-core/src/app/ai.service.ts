@@ -102,6 +102,69 @@ INSTRUCTIONS:
       });
     }
 
+    // Match forget commands (forget all, oublie tout, forget 1, oublie 1)
+    const forgetRegex = /^(?:forget|oublie)\s+(all|tout|\d+)$/i;
+    const forgetMatch = forgetRegex.exec(cleanPrompt);
+    if (forgetMatch && forgetMatch[1]) {
+      const target = forgetMatch[1].trim().toLowerCase();
+      if (target === 'all' || target === 'tout') {
+        try {
+          fs.writeFileSync(this.getMemoryFilePath(), '[]', 'utf-8');
+          return of({
+            content: `[MEMORY_STATE_UPDATED] Ma mémoire évolutive a été entièrement réinitialisée.`,
+            done: true,
+            state: 'IDLE',
+          });
+        } catch (err) {
+          return of({
+            content: `[MEMORY_ERROR] Échec de la réinitialisation de la mémoire.`,
+            done: true,
+            state: 'IDLE',
+          });
+        }
+      } else {
+        const index = parseInt(target, 10) - 1;
+        const memories = this.readMemories();
+        if (index >= 0 && index < memories.length) {
+          const removed = memories.splice(index, 1)[0];
+          try {
+            fs.writeFileSync(this.getMemoryFilePath(), JSON.stringify(memories, null, 2), 'utf-8');
+            return of({
+              content: `[MEMORY_STATE_UPDATED] J'ai effacé ce souvenir de ma mémoire : "${removed}"`,
+              done: true,
+              state: 'IDLE',
+            });
+          } catch (err) {
+            return of({
+              content: `[MEMORY_ERROR] Échec de la suppression du souvenir.`,
+              done: true,
+              state: 'IDLE',
+            });
+          }
+        } else {
+          return of({
+            content: `[MEMORY_WARNING] Aucun souvenir trouvé à l'index ${target}. Tapez "/memories" pour voir la liste.`,
+            done: true,
+            state: 'IDLE',
+          });
+        }
+      }
+    }
+
+    // Match list memories command (/memories, liste ta mémoire)
+    const listRegex = /^(?:\/memories|liste\s+(?:ta\s+mémoire|des\s+souvenirs))$/i;
+    if (listRegex.test(cleanPrompt)) {
+      const memories = this.readMemories();
+      const content = memories.length > 0
+        ? `[MEMORY_DUMP] Voici les informations enregistrées dans ma mémoire :\n` + memories.map((m, idx) => `${idx + 1}. ${m}`).join('\n')
+        : `[MEMORY_DUMP] Ma mémoire évolutive est actuellement vide.`;
+      return of({
+        content,
+        done: true,
+        state: 'IDLE',
+      });
+    }
+
     return new Observable<ApexStreamChunk>((subscriber) => {
       let isCancelled = false;
 
