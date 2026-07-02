@@ -37,11 +37,22 @@ export class AiService {
     }
   }
 
-  private getSystemPrompt(): string {
+  private getSystemPrompt(userPrompt = ''): string {
     const memories = this.readMemories();
     const memoryString = memories.length > 0
       ? memories.map((m, idx) => `${idx + 1}. ${m}`).join('\n')
       : 'Aucune information enregistrée pour le moment.';
+
+    let toolGuidance = '';
+    const cleanUserPrompt = userPrompt.toLowerCase();
+    
+    if (cleanUserPrompt.includes('list') || cleanUserPrompt.includes('ls ') || cleanUserPrompt.includes('liste') || cleanUserPrompt.includes('dir')) {
+      toolGuidance = `\n\nCRITICAL: The user wants to see the contents of a directory. You must use the tool syntax: \`[CMD: list_dir <path>]\` (usually \`[CMD: list_dir .]\` for the root workspace). Do not apologize or say you cannot access files; output the command tag immediately.`;
+    } else if (cleanUserPrompt.includes('read') || cleanUserPrompt.includes('cat ') || cleanUserPrompt.includes('lire') || cleanUserPrompt.includes('contenu') || cleanUserPrompt.includes('affiche le fichier')) {
+      toolGuidance = `\n\nCRITICAL: The user wants to read a file. You must use the tool syntax: \`[CMD: read_file <path>]\`. Do not say you cannot access the file; output the command tag immediately.`;
+    } else if (cleanUserPrompt.includes('git') || cleanUserPrompt.includes('status') || cleanUserPrompt.includes('test') || cleanUserPrompt.includes('build')) {
+      toolGuidance = `\n\nCRITICAL: The user wants to run a terminal command. You must use the tool syntax: \`[CMD: run_command <command>]\`. Do not say you cannot run commands; output the command tag immediately.`;
+    }
 
     return `You are APEX (Advanced Programmed Executive), a futuristic digital HUD AI assistant.
 Current Time: ${new Date().toLocaleString()}
@@ -51,6 +62,16 @@ SKILLS & CAPABILITIES:
 - Immersive FUI Dashboard: You run inside a transparent, frameless desktop application wrapper (Electron + Angular).
 - Audio Vox: You can interact via voice recognition (SpeechRecognition) and natural text-to-speech synthesis.
 - Monorepo Management: You help develop the monorepo architecture using Nx, Angular Standalone widgets, and NestJS gateways.
+
+TOOL CALLING SKILLS:
+You have read-only access to the local filesystem and execution access to white-listed dev commands.
+To use these tools, output a tool instruction in your response stream using the exact syntax:
+- List files in a directory: \`[CMD: list_dir <path>]\` (e.g. \`[CMD: list_dir apps]\` or \`[CMD: list_dir .]\`)
+- Read file content: \`[CMD: read_file <path>]\` (e.g. \`[CMD: read_file package.json]\`)
+- Run a safe terminal command: \`[CMD: run_command <command>]\` (e.g. \`[CMD: run_command git status]\`)
+
+Whitelist for run_command: [git, nx, npm, node, dir, ls]. Any other command will be rejected by the backend.
+When you output a \`[CMD: ...]\`, stop generating further text and wait for the system to process the result.${toolGuidance}
 
 ADAPTIVE MEMORY:
 Below is the list of facts you have learned and must remember about the user and the system:
@@ -369,7 +390,7 @@ INSTRUCTIONS:
 
       (async () => {
         try {
-          const system = this.getSystemPrompt();
+          const system = this.getSystemPrompt(prompt);
           await this.runGeneratorLoop(prompt, system, subscriber, () => isCancelled);
         } catch (error: any) {
           this.logger.error(`Ollama stream loop error: ${error?.message || error}. Falling back to Mock Stream.`);
