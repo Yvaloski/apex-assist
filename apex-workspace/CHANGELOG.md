@@ -1,3 +1,16 @@
+# [1.1.0](https://github.com/Yvaloski/apex-assist/compare/v1.0.0...v1.1.0) (2026-07-02)
+
+
+### Bug Fixes
+
+* update systeminformation jest mock for processes and add memory commands ([e605190](https://github.com/Yvaloski/apex-assist/commit/e60519085a30ef6a04207f0ecfe94d62a346f2b7))
+
+
+### Features
+
+* implement active processes monitor widget in HUD telemetry panel ([2c43ca6](https://github.com/Yvaloski/apex-assist/commit/2c43ca6bf1730823bc6da941069626f156b6857e))
+* implement memory and skills injection, add TTS mute option, and strip markdown from speech ([0fe29e8](https://github.com/Yvaloski/apex-assist/commit/0fe29e8592ec63bf867268d5fc46f5ca4e9043a8))
+
 # 1.0.0 (2026-07-02)
 
 
