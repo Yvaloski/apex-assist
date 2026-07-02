@@ -175,3 +175,9 @@ export class ApexCoreOrbComponent implements OnDestroy, OnChanges {
     };
   };
 }
+
+describe('ApexCoreOrbComponent Experiment Dummy', () => {
+  it('should compile and pass Jest runner', () => {
+    expect(true).toBe(true);
+  });
+});

@@ -11,6 +11,7 @@ describe('SpeechRecognitionService', () => {
     mockStateService = {
       setState: jest.fn(),
       sendPrompt: jest.fn(),
+      setResponse: jest.fn(),
       state: jest.fn(() => 'IDLE'),
     };
 

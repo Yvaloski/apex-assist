@@ -5,11 +5,14 @@ import * as si from 'systeminformation';
 jest.mock('systeminformation', () => ({
   currentLoad: jest.fn().mockResolvedValue({ currentLoad: 25.5 }),
   mem: jest.fn().mockResolvedValue({ active: 4000, total: 16000 }),
+  cpuTemperature: jest.fn().mockResolvedValue({ main: 48.0 }),
 }));
 
 jest.mock('os', () => ({
   totalmem: () => 16000,
   freemem: () => 12000,
+  cpus: () => [{ speed: 4000 }],
+  loadavg: () => [0.5, 0.5, 0.5],
 }));
 
 describe('SystemMonitorService', () => {

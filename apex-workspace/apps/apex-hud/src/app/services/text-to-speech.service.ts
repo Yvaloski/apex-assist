@@ -6,12 +6,17 @@ import { Injectable } from '@angular/core';
 export class TextToSpeechService {
   private sentenceBuffer = '';
   private availableVoices: SpeechSynthesisVoice[] = [];
+  private activeUtterances = new Set<SpeechSynthesisUtterance>();
 
   constructor() {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-      this.availableVoices = window.speechSynthesis.getVoices();
-      window.speechSynthesis.onvoiceschanged = () => {
+      if (typeof window.speechSynthesis.getVoices === 'function') {
         this.availableVoices = window.speechSynthesis.getVoices();
+      }
+      window.speechSynthesis.onvoiceschanged = () => {
+        if (window.speechSynthesis && typeof window.speechSynthesis.getVoices === 'function') {
+          this.availableVoices = window.speechSynthesis.getVoices();
+        }
       };
     }
   }
@@ -24,6 +29,7 @@ export class TextToSpeechService {
       window.speechSynthesis.cancel();
     }
     this.sentenceBuffer = '';
+    this.activeUtterances.clear();
   }
 
   /**
@@ -86,21 +92,42 @@ export class TextToSpeechService {
   private speakSentence(text: string): void {
     if (!text) return;
     try {
+      if (typeof window === 'undefined' || !window.speechSynthesis) {
+        return;
+      }
+
+      // Resume if stuck or paused
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+
       const utterance = new SpeechSynthesisUtterance(text);
       
-      if (this.availableVoices.length === 0 && window.speechSynthesis) {
+      if (this.availableVoices.length === 0 && typeof window.speechSynthesis.getVoices === 'function') {
         this.availableVoices = window.speechSynthesis.getVoices();
       }
 
-      const bestVoice = this.getBestVoice(this.availableVoices);
+      const bestVoice = this.getBestVoice(this.availableVoices, text);
       if (bestVoice) {
         utterance.voice = bestVoice;
         utterance.lang = bestVoice.lang;
       }
       
-      // Futuristic adjustments: slightly faster rate, deeper tone.
-      utterance.rate = 1.08;
-      utterance.pitch = 0.95;
+      // Clean, natural sound for speech: 1.0 rate and pitch avoids mechanical distortion
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+
+      // Prevent garbage collection which causes Chrome queue hangs
+      this.activeUtterances.add(utterance);
+
+      utterance.onend = () => {
+        this.activeUtterances.delete(utterance);
+      };
+
+      utterance.onerror = (event) => {
+        console.warn('SpeechSynthesisUtterance error:', event);
+        this.activeUtterances.delete(utterance);
+      };
 
       window.speechSynthesis.speak(utterance);
     } catch (err) {
@@ -108,27 +135,65 @@ export class TextToSpeechService {
     }
   }
 
-  private getBestVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
-    // 1. Google High-quality voice in Chrome
-    let voice = voices.find(v => v.name.includes('Google US English') || v.name.includes('Google'));
-    if (voice) return voice;
+  private isFrenchText(text: string): boolean {
+    const frenchRegex = /[éàèùçêëïôœæ]/i;
+    if (frenchRegex.test(text)) return true;
 
-    // 2. Clear female sci-fi voice (Zira or Hortense)
-    voice = voices.find(v => v.name.includes('Zira') || v.name.includes('Hortense'));
-    if (voice) return voice;
+    const frenchWords = /\b(le|la|les|un|une|des|est|sont|dans|pour|avec|vous|nous|suis|projet|système|directive|activé|reconnu|erreur|connexion|ordinateur)\b/i;
+    return frenchWords.test(text);
+  }
 
-    // 3. Clear male voice (David)
-    voice = voices.find(v => v.name.includes('David'));
-    if (voice) return voice;
+  private getBestVoice(voices: SpeechSynthesisVoice[], text: string): SpeechSynthesisVoice | null {
+    if (!voices || voices.length === 0) return null;
 
-    // 4. Default English
-    voice = voices.find(v => v.lang.startsWith('en'));
-    if (voice) return voice;
+    const isFrench = this.isFrenchText(text);
 
-    // 5. Default French
-    voice = voices.find(v => v.lang.startsWith('fr'));
-    if (voice) return voice;
+    if (isFrench) {
+      // 1. Google French (Chrome)
+      let voice = voices.find(v => v.lang.startsWith('fr') && v.name.includes('Google'));
+      if (voice) return voice;
 
-    return voices[0] || null;
+      // 2. Microsoft French (Edge / Windows SAPI)
+      voice = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Hortense') || v.name.includes('Microsoft')));
+      if (voice) return voice;
+
+      // 3. Apple French (macOS / iOS)
+      voice = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Thomas') || v.name.includes('Amélie') || v.name.includes('Audrey')));
+      if (voice) return voice;
+
+      // 4. Any French voice
+      voice = voices.find(v => v.lang.startsWith('fr'));
+      if (voice) return voice;
+    } else {
+      // 1. Google English (Chrome)
+      let voice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google US English'));
+      if (voice) return voice;
+      
+      voice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google'));
+      if (voice) return voice;
+
+      // 2. Microsoft English (Edge Aria / Guy, or standard Microsoft)
+      voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Aria') || v.name.includes('Guy') || v.name.includes('Microsoft')));
+      if (voice) return voice;
+
+      // 3. Apple English (macOS / iOS)
+      voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Alex')));
+      if (voice) return voice;
+
+      // 4. Any English voice
+      voice = voices.find(v => v.lang.startsWith('en'));
+      if (voice) return voice;
+    }
+
+    // Cross-fallback
+    if (isFrench) {
+      const enVoice = voices.find(v => v.lang.startsWith('en'));
+      if (enVoice) return enVoice;
+    } else {
+      const frVoice = voices.find(v => v.lang.startsWith('fr'));
+      if (frVoice) return frVoice;
+    }
+
+    return voices.find(v => v.default) || voices[0] || null;
   }
 }

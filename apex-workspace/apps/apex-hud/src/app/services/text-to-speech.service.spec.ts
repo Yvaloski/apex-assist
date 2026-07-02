@@ -10,6 +10,7 @@ describe('TextToSpeechService', () => {
     mockSpeechSynthesis = {
       speak: jest.fn(),
       cancel: jest.fn(),
+      getVoices: jest.fn().mockReturnValue([]),
     };
 
     mockUtteranceClass = jest.fn().mockImplementation((text) => ({
