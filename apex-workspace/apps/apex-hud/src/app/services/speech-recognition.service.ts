@@ -81,12 +81,13 @@ export class SpeechRecognitionService {
     const recognition = new SpeechRecognitionClass();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = 'en-US';
+    recognition.lang = typeof navigator !== 'undefined' ? navigator.language : 'fr-FR';
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0]?.transcript;
       if (transcript && transcript.trim()) {
         console.log('SpeechRecognitionService: Speech recognized:', transcript);
+        this.stateService.setResponse(`[VOICE_INPUT_RECOGNIZED] "${transcript}"\n[CORE_LINK] TRANSMITTING DIRECTIVE...`);
         this.stateService.sendPrompt(transcript);
       }
     };
