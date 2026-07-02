@@ -1,5 +1,14 @@
 import { Injectable, signal } from '@angular/core';
 
+export interface TtsDiagnosticReport {
+  supported: boolean;
+  voiceCount: number;
+  availableLanguages: string[];
+  isMuted: boolean;
+  activeUtterancesCount: number;
+  recommendations: string[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -97,6 +106,38 @@ export class TextToSpeechService {
   }
 
   /**
+   * Run a diagnostic check on the Text-to-Speech system.
+   */
+  public runDiagnostics(): TtsDiagnosticReport {
+    const supported = typeof window !== 'undefined' && !!window.speechSynthesis;
+    const voiceCount = this.availableVoices.length;
+    const availableLanguages = Array.from(new Set(this.availableVoices.map(v => v.lang)));
+    const isMuted = this._isMuted();
+    const activeUtterancesCount = this.activeUtterances.size;
+    const recommendations: string[] = [];
+
+    if (!supported) {
+      recommendations.push('Text-to-Speech (speechSynthesis) is not supported in this browser context.');
+    } else {
+      if (voiceCount === 0) {
+        recommendations.push('No TTS voices available. Check system voice settings (e.g., Windows SAPI/Speech setting).');
+      }
+      if (isMuted) {
+        recommendations.push('The audio system is muted. Toggle mute off to hear voice synthesis.');
+      }
+    }
+
+    return {
+      supported,
+      voiceCount,
+      availableLanguages,
+      isMuted,
+      activeUtterancesCount,
+      recommendations
+    };
+  }
+
+  /**
    * Build and queue a SpeechSynthesisUtterance.
    */
   private speakSentence(text: string): void {
@@ -139,12 +180,24 @@ export class TextToSpeechService {
       // Prevent garbage collection which causes Chrome queue hangs
       this.activeUtterances.add(utterance);
 
+      // Keep-alive timer to prevent Chrome SpeechSynthesis from timing out / stopping mid-sentence
+      const keepAliveInterval = setInterval(() => {
+        if (this.activeUtterances.has(utterance) && window.speechSynthesis.speaking) {
+          window.speechSynthesis.pause();
+          window.speechSynthesis.resume();
+        } else {
+          clearInterval(keepAliveInterval);
+        }
+      }, 10000);
+
       utterance.onend = () => {
+        clearInterval(keepAliveInterval);
         this.activeUtterances.delete(utterance);
       };
 
       utterance.onerror = (event) => {
         console.warn('SpeechSynthesisUtterance error:', event);
+        clearInterval(keepAliveInterval);
         this.activeUtterances.delete(utterance);
       };
 

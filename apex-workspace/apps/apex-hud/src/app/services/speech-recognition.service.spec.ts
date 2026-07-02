@@ -100,4 +100,15 @@ describe('SpeechRecognitionService', () => {
 
     expect(mockStateService.setState).toHaveBeenCalledWith('IDLE');
   });
+
+  it('should allow setting and getting language', () => {
+    service.setLanguage('en-US');
+    expect(service.getLanguage()).toBe('en-US');
+  });
+
+  it('should run diagnostics and return a detailed report', async () => {
+    const report = await service.runDiagnostics();
+    expect(report).toBeDefined();
+    expect(report.supported).toBe(true);
+  });
 });

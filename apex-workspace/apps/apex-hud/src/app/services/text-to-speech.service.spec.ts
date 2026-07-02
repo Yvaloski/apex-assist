@@ -61,4 +61,11 @@ describe('TextToSpeechService', () => {
     expect(mockSpeechSynthesis.speak).toHaveBeenCalledTimes(2);
     expect(mockUtteranceClass).toHaveBeenCalledWith('Next sentence');
   });
+
+  it('should run diagnostics and return a detailed report', () => {
+    const report = service.runDiagnostics();
+    expect(report).toBeDefined();
+    expect(report.supported).toBe(true);
+    expect(report.isMuted).toBe(false);
+  });
 });
