@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/Yvaloski/apex-assist/compare/v1.3.0...v1.3.1) (2026-07-02)
+
+
+### Bug Fixes
+
+* enrich system prompt dynamically to force tool call tag generation ([8d09876](https://github.com/Yvaloski/apex-assist/commit/8d098761b9cd085d132d09d22690bfd1ff1e3e37))
+
 # [1.3.0](https://github.com/Yvaloski/apex-assist/compare/v1.2.0...v1.3.0) (2026-07-02)
 
 
