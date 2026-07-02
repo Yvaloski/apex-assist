@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Yvaloski/apex-assist/compare/v1.1.0...v1.2.0) (2026-07-02)
+
+
+### Features
+
+* add detailed voice diagnostics, dynamic language selection, and Chrome TTS keep-alive ([53a46d5](https://github.com/Yvaloski/apex-assist/commit/53a46d52e5c577d6b90c2ce38950b17213788309))
+
 # [1.1.0](https://github.com/Yvaloski/apex-assist/compare/v1.0.0...v1.1.0) (2026-07-02)
 
 
