@@ -2,7 +2,9 @@
   "name": "@apex-workspace/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "serve:desktop": "electron apps/apex-desktop"
+  },
   "private": true,
   "devDependencies": {
     "@angular-devkit/core": "~21.2.0",
@@ -27,6 +29,7 @@
     "@swc/helpers": "~0.5.18",
     "@types/jest": "~30.0.0",
     "@types/node": "^22.0.0",
+    "electron": "^43.0.0",
     "jest": "~30.3.0",
     "jest-environment-jsdom": "~30.3.0",
     "jest-environment-node": "~30.3.0",

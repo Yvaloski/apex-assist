@@ -89,6 +89,7 @@ body {
   padding: 0 20px;
   background: rgba(2, 4, 8, 0.6);
   backdrop-filter: blur(4px);
+  -webkit-app-region: drag;
 
   .header-left, .header-right {
     display: flex;

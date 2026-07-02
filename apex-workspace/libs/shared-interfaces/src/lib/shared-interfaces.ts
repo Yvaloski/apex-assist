@@ -9,5 +9,10 @@ export interface ApexStreamChunk {
 export interface SystemMetrics {
   cpu: number;
   ram: number;
+  cpuSpeed?: number;
+  cpuTemp?: number;
+  cpuLoadAvg?: number;
+  ramTotal?: number;
+  ramUsed?: number;
 }
 

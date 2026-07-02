@@ -16,22 +16,53 @@ export class SystemMonitorService {
 
   public readonly metrics$: Observable<SystemMetrics> = interval(1000).pipe(
     concatMap(() => {
-      // 1. RAM: Use native OS total/free memory (works on Windows instantly without WMI queries)
+      // 1. RAM: Use native OS total/free memory (works on Windows instantly)
       const totalMem = os.totalmem();
       const freeMem = os.freemem();
       const usedMem = totalMem - freeMem;
       const ram = totalMem > 0 ? (usedMem / totalMem) * 100 : 0;
+      const ramTotal = totalMem / (1024 * 1024 * 1024);
+      const ramUsed = usedMem / (1024 * 1024 * 1024);
 
-      // 2. CPU: Fetch system load with a timeout fallback to prevent WMI hangs
-      return from(si.currentLoad()).pipe(
+      // 2. CPU Speed
+      const cpus = os.cpus();
+      const cpuSpeed = cpus && cpus.length > 0 ? cpus[0].speed / 1000 : 4.0;
+
+      // 3. CPU Load and Temp with fallbacks
+      return from(Promise.all([
+        si.currentLoad(),
+        si.cpuTemperature().catch(() => ({ main: 0 }))
+      ])).pipe(
         timeout(800),
-        concatMap((cpuData) => {
+        concatMap(([cpuData, tempData]) => {
           this.lastCpu = cpuData.currentLoad;
-          return of({ cpu: this.lastCpu, ram });
+          const cpuTemp = tempData.main || 48.0;
+          const rawLoad = os.loadavg()[0];
+          const cpuLoadAvg = rawLoad > 0 ? rawLoad : (this.lastCpu * cpus.length) / 100 || 0.5;
+
+          return of({
+            cpu: this.lastCpu,
+            ram,
+            cpuSpeed,
+            cpuTemp,
+            cpuLoadAvg,
+            ramTotal,
+            ramUsed
+          });
         }),
         catchError((error) => {
-          this.logger.debug(`CPU metrics timeout/error: ${error?.message || error}. Using last value.`);
-          return of({ cpu: this.lastCpu, ram });
+          this.logger.debug(`CPU metrics timeout/error: ${error?.message || error}. Using fallback.`);
+          const rawLoad = os.loadavg()[0];
+          const cpuLoadAvg = rawLoad > 0 ? rawLoad : (this.lastCpu * cpus.length) / 100 || 0.5;
+          return of({
+            cpu: this.lastCpu,
+            ram,
+            cpuSpeed,
+            cpuTemp: 48.0,
+            cpuLoadAvg,
+            ramTotal,
+            ramUsed
+          });
         })
       );
     })
