@@ -17,6 +17,19 @@ function createWindow() {
     },
   });
 
+  // Autorise automatiquement le microphone dans Electron
+  win.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
+    if (permission === 'media') {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
+
+  win.webContents.session.setPermissionCheckHandler((webContents, permission, origin) => {
+    return permission === 'media';
+  });
+
   if (isDev) {
     // Charge l'application Angular servie localement
     win.loadURL('http://localhost:4200');

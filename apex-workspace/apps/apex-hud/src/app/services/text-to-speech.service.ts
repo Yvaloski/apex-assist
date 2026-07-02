@@ -5,8 +5,16 @@ import { Injectable } from '@angular/core';
 })
 export class TextToSpeechService {
   private sentenceBuffer = '';
+  private availableVoices: SpeechSynthesisVoice[] = [];
 
-  constructor() {}
+  constructor() {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      this.availableVoices = window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => {
+        this.availableVoices = window.speechSynthesis.getVoices();
+      };
+    }
+  }
 
   /**
    * Cancel any ongoing speech and clear the buffer.
@@ -80,13 +88,47 @@ export class TextToSpeechService {
     try {
       const utterance = new SpeechSynthesisUtterance(text);
       
-      // Futuristic adjustments: slightly faster rate, normal pitch.
-      utterance.rate = 1.05;
-      utterance.pitch = 1.0;
+      if (this.availableVoices.length === 0 && window.speechSynthesis) {
+        this.availableVoices = window.speechSynthesis.getVoices();
+      }
+
+      const bestVoice = this.getBestVoice(this.availableVoices);
+      if (bestVoice) {
+        utterance.voice = bestVoice;
+        utterance.lang = bestVoice.lang;
+      }
+      
+      // Futuristic adjustments: slightly faster rate, deeper tone.
+      utterance.rate = 1.08;
+      utterance.pitch = 0.95;
 
       window.speechSynthesis.speak(utterance);
     } catch (err) {
       console.warn('SpeechSynthesis error:', err);
     }
+  }
+
+  private getBestVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
+    // 1. Google High-quality voice in Chrome
+    let voice = voices.find(v => v.name.includes('Google US English') || v.name.includes('Google'));
+    if (voice) return voice;
+
+    // 2. Clear female sci-fi voice (Zira or Hortense)
+    voice = voices.find(v => v.name.includes('Zira') || v.name.includes('Hortense'));
+    if (voice) return voice;
+
+    // 3. Clear male voice (David)
+    voice = voices.find(v => v.name.includes('David'));
+    if (voice) return voice;
+
+    // 4. Default English
+    voice = voices.find(v => v.lang.startsWith('en'));
+    if (voice) return voice;
+
+    // 5. Default French
+    voice = voices.find(v => v.lang.startsWith('fr'));
+    if (voice) return voice;
+
+    return voices[0] || null;
   }
 }
