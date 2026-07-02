@@ -81,7 +81,7 @@ export class SpeechRecognitionService {
     const recognition = new SpeechRecognitionClass();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = typeof navigator !== 'undefined' ? navigator.language : 'fr-FR';
+    recognition.lang = 'fr-FR';
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0]?.transcript;
