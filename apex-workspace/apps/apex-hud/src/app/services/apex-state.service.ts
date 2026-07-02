@@ -48,6 +48,13 @@ export class ApexStateService {
   }
 
   /**
+   * Set a custom response message in the HUD logstream.
+   */
+  setResponse(response: string): void {
+    this._currentResponse.set(response);
+  }
+
+  /**
    * Listen to incoming backend events from the WebSocket service.
    */
   private initializeWebSocketListeners(): void {

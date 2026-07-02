@@ -95,6 +95,18 @@ export class SpeechRecognitionService {
       console.error('SpeechRecognitionService: Recognition error', event.error);
       this.isListening = false;
       this.stateService.setState('IDLE');
+
+      let errorMsg = `[SYSTEM_WARNING] VOICE_INPUT_FAILED: ${event.error.toUpperCase()}`;
+      if (event.error === 'service-not-allowed') {
+        errorMsg += `\n\n-> Reason: Google Speech API is unavailable in this Electron build (standard Chromium restriction).`;
+        errorMsg += `\n-> Action: Please open the HUD in Google Chrome at http://localhost:4200/ for Web Speech support.`;
+      } else if (event.error === 'not-allowed') {
+        errorMsg += `\n\n-> Reason: Microphone access denied.`;
+        errorMsg += `\n-> Action: Check Windows microphone permissions for Electron/terminal.`;
+      } else {
+        errorMsg += `\n\n-> Please check browser/system speech settings.`;
+      }
+      this.stateService.setResponse(errorMsg);
     };
 
     recognition.onend = () => {
