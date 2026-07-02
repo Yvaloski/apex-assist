@@ -1,73 +1,97 @@
 import {
   Component,
+  inject,
   signal,
+  computed,
   ViewChild,
   ElementRef,
-  effect,
+  AfterViewChecked,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApexState } from '@apex-workspace/shared-interfaces';
+import { ApexStateService } from './services/apex-state.service';
+import { SpeechRecognitionService } from './services/speech-recognition.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './app.html',
-  styleUrls: ['./app.scss'],
+  styleUrl: './app.scss',
 })
-export class AppComponent {
-  @ViewChild('responseContainer')
-  responseContainer!: ElementRef<HTMLDivElement>;
+export class App implements AfterViewChecked {
+  private readonly stateService = inject(ApexStateService);
+  private readonly speechService = inject(SpeechRecognitionService);
 
-  state = signal<ApexState>('IDLE');
-  promptText = '';
-  currentResponse = signal<string>('');
-  systemMetrics = signal({ cpu: 14.5, ram: 62.8 });
-  isSpeechSupported = true;
+  @ViewChild('responseContainer') private responseContainer!: ElementRef;
 
-  constructor() {
-    effect(() => {
-      if (this.currentResponse() && this.responseContainer) {
-        setTimeout(() => {
-          const container = this.responseContainer.nativeElement;
-          container.scrollTop = container.scrollHeight;
-        }, 0);
-      }
-    });
+  public readonly title = 'apex-hud';
+
+  // Tes vrais signaux d'origine issus du service global
+  public readonly state = this.stateService.state;
+  public readonly currentResponse = this.stateService.currentResponse;
+  public readonly systemMetrics = this.stateService.systemMetrics;
+
+  // 🟢 NOUVEAU : Signal réseau dynamique lié à l'état global ou à ton futur service
+  // Si ton ApexStateService possède déjà un signal networkMetrics, remplace par : this.stateService.networkMetrics
+  public readonly networkMetrics = computed(() => {
+    const s = this.state();
+    return {
+      nodeAddr: '127.0.0.1:4200',
+      wsLatency: s === 'THINKING' ? 14 : 4,
+      bufferStatus: s === 'THINKING' ? 'PROCESSING' : 'NOMINAL',
+      packetLoss: 0.0,
+    };
+  });
+
+  public promptText = '';
+  public readonly isSpeechSupported = this.speechService.isSupported();
+
+  public readonly stateClass = computed(() => {
+    const s = this.state();
+    return s.toLowerCase();
+  });
+
+  public readonly stateLabel = computed(() => {
+    const s = this.state();
+    switch (s) {
+      case 'THINKING':
+        return 'PROCESSING QUERY...';
+      case 'LISTENING':
+        return 'CAPTURING AUDIO...';
+      default:
+        return 'SYSTEM ONLINE';
+    }
+  });
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
   }
 
-  stateLabel(): string {
-    switch (this.state()) {
-      case 'LISTENING':
-        return 'VOX_ACTIVE_LISTENING';
-      case 'THINKING':
-        return 'COGNITIVE_PROCESSING';
+  public sendPrompt(): void {
+    const text = this.promptText.trim();
+    if (!text) return;
+    this.stateService.sendPrompt(text);
+    this.promptText = '';
+  }
 
-      case 'IDLE':
-      default:
-        return 'SYSTEM_READY_AWAITING_INPUT';
+  public toggleSpeech(): void {
+    if (this.state() === 'LISTENING') {
+      this.speechService.stop();
+      this.stateService.setState('IDLE');
+    } else {
+      this.speechService.start();
     }
   }
 
-  stateClass(): string {
-    return `state-${this.state().toLowerCase()}`;
-  }
-
-  sendPrompt() {
-    if (!this.promptText.trim()) return;
-    this.state.set('THINKING');
-    this.currentResponse.set(
-      `[CORE_LINK] TRANSMITTING DIRECTIVE...\n[APEX] COGNITIVE ENGINE ENGAGED.`,
-    );
-    this.promptText = '';
-
-    setTimeout(() => {
-      this.state.set('IDLE');
-    }, 4000);
-  }
-
-  toggleSpeech() {
-    this.state.set(this.state() === 'LISTENING' ? 'IDLE' : 'LISTENING');
+  private scrollToBottom(): void {
+    try {
+      if (this.responseContainer) {
+        this.responseContainer.nativeElement.scrollTop =
+          this.responseContainer.nativeElement.scrollHeight;
+      }
+    } catch (err) {
+      // Ignore
+    }
   }
 }
