@@ -34,4 +34,16 @@
 - [x] Ajouter des effets sonores futuristes discrets lors des changements d'état
 
 
-- [ ] *Optionnel :* Configurer Electron pour encapsuler l'application Angular dans une fenêtre de bureau transparente
+- [x] *Optionnel :* Configurer Electron pour encapsuler l'application Angular dans une fenêtre de bureau transparente
+
+## 🛠️ Étape 6 : Modularisation, Métriques Réelles & Mémoire Évolutive
+- [x] Réorganiser le frontend en 6 widgets standalone (`widgets/`) via sélecteurs d'attributs pour conserver la grille CSS d'origine.
+- [x] Résoudre les désynchronisations de rendu Angular (`NgZone.run()`) sur les flux WebSocket et les événements micro.
+- [x] Stabiliser la synthèse vocale (gestion de la file d'attente contre le garbage collection et les blocages).
+- [x] Filtrer les astérisques Markdown et les métadonnées pour éviter que l'IA ne les lise à haute voix.
+- [x] Ajouter un bouton de coupure globale de la voix (`MUTE_VOICE`) dans le panneau de commande.
+- [x] Connecter les métriques système à des sondes matérielles réelles (vitesse, température, charge CPU et RAM en Go).
+- [x] Développer le widget `ACTIVE_PROCESS_MONITOR` (top 5 des processus consommant le plus de CPU en temps réel).
+- [x] Implémenter la mémoire persistante locale (`memory.json`) de l'IA (commandes `souviens-toi de : ...`).
+- [x] Injecter la mémoire et les compétences (skills) d'APEX dans le prompt système d'Ollama.
+- [x] Corriger et mockér les suites de tests unitaires Jest pour qu'elles passent toutes au vert (100% OK).
